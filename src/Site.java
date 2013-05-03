@@ -1,43 +1,40 @@
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
+
 public class Site implements Runnable {
 	public Site() {}
-	public Site(String name) {
+	public Site(int id, String name) {
 		setName(name);
+		ID = id;
 	}
+	
+	/** PROPERTIES **/
+	private int ID;  
+	private String name;
 	
 	private HashMap<String, String> settings = new HashMap<String,String>();
 	private ArrayList<Binding> bindings = new ArrayList<Binding>();
 	
-	private String name;
-	
+	/** GETTERS/SETTERS **/
+	public int getID() {
+		return ID;
+	}
 	
 	public String getName() {
 		return name;
 	}
 
-	// HotUpdate
 	public boolean setName(String name) {
-		if (Config.updateSiteName(this.name,this)) {
+		if (Config.put("sites." + getID() + ".name", this.getName()))
+		{
 			this.name = name;
-			WebServer.restart();
 			return true;
 		}
 		return false;
 	}
 	
-	@Override
-	public void run() {
-		handleRequest();
-	}
-	
-	public void handleRequest() {
-		
-		
-	}
 	public ArrayList<Binding> getBindings() {
 		return bindings;
 	}
@@ -49,10 +46,6 @@ public class Site implements Runnable {
 		return false;
 	}
 	
-	public void run(Request r) {
-		r.out.println("Not Implemented! Derive a class and Override the run() method of Site");
-	}
-	
 	public HashMap<String, String> getSettings() {
 		return settings;
 	}
@@ -60,29 +53,77 @@ public class Site implements Runnable {
 		this.settings = settings;
 	}
 	
+	/** METHODS **/
+	
+	public void run(Request r) {
+		r.out.close();
+	}
+	
+	
+	
+	/** ERROR HANDLING API FRAMEWORK **/
+	
+	/**
+	 * @overload
+	 * @param code
+	 */
 	public void triggerError(int code) {
 		triggerError((double)code,(String)null);
 	}
-	
+	/**
+	 * @overload
+	 * @param code
+	 * @param message
+	 */
 	public void triggerError(int code,String message) {
 		triggerError((double)code,message);
 	}
-	
+	/**
+	 * @overload
+	 * @param code
+	 * @param ex
+	 */
 	public void triggerError(int code,Exception ex) {
 		triggerError((double)code,ex);
 	}
-	
+	/**
+	 * @overload
+	 * @param code
+	 */
 	public void triggerError(double code) {
 		triggerError(code,(String)null);
 	}
-	
+	/**
+	 * @overload
+	 * @param code
+	 * @param message
+	 */
 	public void triggerError(double code,String message) {
-		//TODO: Stuff
+		triggerError(code,message,null);
+	}
+	/**
+	 * @overload
+	 * @param code
+	 * @param e
+	 */
+	public void triggerError(double code,Exception e) {
+		triggerError(code,null,e);
+	}
+	/**
+	 * @overload master
+	 * @param code
+	 * @param message
+	 * @param e
+	 */
+	public void triggerError(double code, String message, Exception e) {
+		
+	}
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 	
-	public void triggerError(double code,Exception e) {
-		//TODO: Stuff
-	}
 	
 	
 }

@@ -1,11 +1,14 @@
 import java.io.IOException;
 
+import javax.naming.OperationNotSupportedException;
+
 import WebServer.Tests.StopWatch;
 public class GenericSite extends Site {
-	public GenericSite(String name) {
-		super(name);
+	public GenericSite(int id, String name) {
+		super(id,name);
 	}
 	
+	@Override
 	public void run(Request r) {
 		WebServer.logDebug("Run Called on RequestID: " + r.getRequestID());
 		for (String defaultDocument : ("," + getSettings().get("DefaultDocuments")).split(",")) {

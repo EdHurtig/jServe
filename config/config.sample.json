@@ -1,0 +1,39 @@
+{
+    "sites": [
+        {
+            "name": "Example",
+            "bindings": [
+                {
+                    "protocol": "HTTP",
+                    "domain": "ht.gs",
+                    "port": 8888
+                },
+                {
+                    "protocol": "HTTP",
+                    "domain": "localhost",
+                    "port": 8888
+                },
+                {
+                    "protocol": "HTTP",
+                    "domain": "localhost",
+                    "port": 8889
+                }
+            ],
+            "settings": {
+                    "allow-override": "all",
+                    "deny-override": "/public",
+                    "document-root": "/Users/ehurtig/Dropbox/java/jserve/www/Example"
+                }
+        }
+    ],
+    "server_name": "jServe",
+    "mods": [
+        {
+            "#name": "My Mod",
+            "#shortname": "mymod",
+            "#settings": {
+                 "#key": "value",
+ 			}
+        }
+    ]
+}

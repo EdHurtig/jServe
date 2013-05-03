@@ -1,7 +1,10 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 
 
@@ -39,20 +42,27 @@ public class Utils {
 
 	}
 	
-	public static String readFile(String fileName) {
+	public static boolean writeTextFile(String fileName, String content) {
 		try {
-
-			// shows what the path is (for testing/debugging)
-			// System.out.println(System.getProperty("user.dir"));
-
-			// longer form of file name w/ path (if needed)
-			// FileInputStream fstream = new
-			// FileInputStream(System.getProperty("user.dir") + "/" + fileName);
-
-			// shorter form of file name assumes file in current directory
-			// (which is the project directory
-			// if no subdirectory option used)
+			File f = new File(fileName);
+			if (f.exists() && !f.isDirectory() && f.canWrite()) {
+				
 			
+				FileWriter fw = new FileWriter(fileName);
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write(content);
+				bw.close();
+
+			return true;
+			}
+		} catch (Exception e) {
+			WebServer.triggerInternalError("Error Writing to File: " + fileName + " error: " + e.getMessage());
+		}
+		return false;
+	}
+	
+	public static String readTextFile(String fileName) {
+		try {
 			File f = new File(fileName);
 			if (f.exists() && !f.isDirectory()) {
 			FileInputStream fstream = new FileInputStream(fileName);
@@ -76,7 +86,7 @@ public class Utils {
 			WebServer.logInfo("Couldn't Find File: " + fileName);
 			return null;
 		} catch (Exception e) { // Catch exception if any
-			WebServer.triggerInternalError("Error Loading File: " + e.getMessage());
+			WebServer.triggerInternalError("Error Loading File: " + fileName + " error: " + e.getMessage());
 			return null;
 		}
 

@@ -1,0 +1,38 @@
+{
+	"#about" : "This is the main JSON configuration file for jServe
+	
+	append any keys with a hashtag (#) to comment them out.
+	
+	To get a list of all loaded settings do any of the following:
+		1: Open admin gui. Settings > View Loaded Settings
+		or
+		2: Open Command Line. type: 'call config.print()'
+			Optionally you can add: 'call config.printAll()' to print the entire loaded file with commented keys
+	
+	Including Other Files, to include another json file use the following syntax @include('<path relative to current config file>').  
+	This will just insert the contents of the file and then parse the json so make sure that the composite will be valid!
+	
+	NO QUOTES, JSON ENCODE YOUR TEXT
+	
+	",
+	
+	"sites" : [
+		{ "name" : "Example", "bindings" : [
+			{ "protocol" : "HTTP", "domain" : "ht.gs", "port" : 8888 },
+			{ "protocol" : "HTTP", "domain" : "localhost", "port" : 8888 },
+			{ "protocol" : "HTTP", "domain" : "localhost", "port" : 8889 },
+		],
+		"settings" : [
+			"allow-override" : "all",
+			"deny-override" : "/public",
+			"document-root" : "/Users/ehurtig/Dropbox/java/jserve/www/Example"
+		]
+		}
+	],
+	"server_name" : "jServe",
+	"mods" : [
+		{ "#name" : "My Mod", "#shortname" : "mymod", "#settings" : [
+			"#key" : "value"
+		] }
+	]
+}

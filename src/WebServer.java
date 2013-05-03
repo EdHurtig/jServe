@@ -22,8 +22,9 @@ public class WebServer {
 		if (args.contains("debug"))
 			DEBUG = true;
 
+		
 
-		GenericSite example = new GenericSite("Example Site");
+		GenericSite example = new GenericSite(1,"Example Site");
 		ArrayList<Binding> exampleBindings = new ArrayList<Binding>();
 		exampleBindings.add(new Binding("HTTP","*",8888));
 		exampleBindings.add(new Binding("HTTP","localhost",8889));
