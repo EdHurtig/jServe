@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="src/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="src/commons-beanutils-1.8.3.jar"/>
 	<classpathentry kind="lib" path="src/JTattoo-1.6.8.jar"/>
+	<classpathentry kind="lib" path="jsoup-1.7.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

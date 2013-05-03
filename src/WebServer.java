@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 import org.omg.PortableServer.POAManagerPackage.State;
 
-public class WebServer {
+public class WebServer implements Configurable {
 	public static boolean DEBUG = true;  //TODO: change to false for production
 	public static ArrayList<Site> sites = new ArrayList<Site>();
 	public static int lastRequestID = 1;
@@ -47,18 +47,7 @@ public class WebServer {
 
 		
 
-		GenericSite example = new GenericSite(1,"Example Site");
-		ArrayList<Binding> exampleBindings = new ArrayList<Binding>();
-		exampleBindings.add(new Binding("HTTP","*",8888));
-		exampleBindings.add(new Binding("HTTP","localhost",8889));
-		exampleBindings.add(new Binding("HTTP","localhost2",8889));
-
-		example.setBindings(exampleBindings);
-
-		example.getSettings().put("DOCUMENT_ROOT", "/Users/ehurtig/desktop/bootstrap-master-2/docs/");
-		example.getSettings().put("DefaultDocuments", "index.php,index.html");
 		
-		sites.add(example);
 		logInfo("Starting Server");
 		start();
 		
@@ -321,6 +310,12 @@ public class WebServer {
 	
 	public static void logInfo(String message) {
 		System.out.println(message);
+	}
+
+	@Override
+	public boolean configure() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
 

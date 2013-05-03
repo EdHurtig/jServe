@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.*;
 import java.util.HashMap;
 import net.sf.json.*;
 
@@ -7,27 +10,45 @@ import org.apache.commons.io.IOUtils;
 
 public class Config {
 	public static final String CONFIG_FILE = "config/config.sample.json";
-	private static JSONObject currentConfig = new JSONObject();
+	private static Document currentConfig;
 	private static boolean loaded = false;
 	
 	public static boolean load() { return load(null); }
-	public static boolean load(String customJSON) {
+	public static boolean load(String customHTML) {
 		
-		String jsonTxt;
+		String html = null;
 		
-		if (customJSON == null)
-			jsonTxt = Utils.readTextFile(CONFIG_FILE);
+		if (customHTML == null)
+			html = Utils.readTextFile(CONFIG_FILE);
 		else
-			jsonTxt = customJSON;
-		if (jsonTxt == null)
+			html = customHTML;
+		if (html == null)
 			return false;
 
-		currentConfig = (JSONObject) JSONSerializer.toJSON( jsonTxt );
 		
-		
-		
-		
+		currentConfig = Jsoup.parse(html);
+	
 		System.out.println(currentConfig);
+		
+		
+		/** EXAMPLE CONTENT **/
+		
+		
+		GenericSite example = new GenericSite(1,"Example Site");
+		ArrayList<Binding> exampleBindings = new ArrayList<Binding>();
+		exampleBindings.add(new Binding("HTTP","*",8888));
+		exampleBindings.add(new Binding("HTTP","localhost",8889));
+		exampleBindings.add(new Binding("HTTP","localhost2",8889));
+
+		example.setBindings(exampleBindings);
+
+		example.getSettings().put("DOCUMENT_ROOT", "/Users/ehurtig/desktop/bootstrap-master-2/docs/");
+		example.getSettings().put("DefaultDocuments", "index.php,index.html");
+		
+		WebServer.sites.add(example);
+		
+		
+		
 		return true;
 		
 		
@@ -42,37 +63,13 @@ public class Config {
 //	    System.out.println( "Pilot: " + lastName );
 	}
 	
-	public static boolean put(Object key, Object value) {
-		currentConfig.put(key, value);
+	public static boolean add(String selector, String value) {
+		
 		String newFile = currentConfig.toString();
 		WebServer.logInfo("Writing new Configuration as: " + newFile);
 		//return Utils.writeTextFile(CONFIG_FILE,newFile);
 		return true;
 	}
-	
-	public static Object get(String key) {
-		return currentConfig.get(key);
-	}
-	
-	public static String getString(String key) {
-		return currentConfig.getString(key);
-	}
-	
-	public static Boolean getBoolean(String key) {
-		return currentConfig.getBoolean(key);
-	}
-	
-	public static Double getDouble(String key) {
-		return currentConfig.getDouble(key);
-	}
-	
-	public static Integer getInt(String key) {
-		return currentConfig.getInt(key);
-	}
-	public static JSONObject getJSONObject(String key) {
-		return currentConfig.getJSONObject(key);
-	}
-	
 	
 	public static boolean isLoaded() {
 		return loaded;
@@ -95,20 +92,5 @@ public class Config {
 		return false;
 	}
 	
-	public static void printAll() {
-		System.out.println("Printing Config");
-		for (Object s : currentConfig.keySet())
-		{
-			print_r((String) s, currentConfig.getJSONObject((String) s));
-		}
-	}
 	
-	private static void print_r(String key, JSONObject element) {
-		System.out.print(key + " = { ");
-		for (Object s : element.keySet())
-		{
-			print_r((String) s,element.getJSONObject((String) s));
-		}
-		System.out.println("}");
-	}
 }

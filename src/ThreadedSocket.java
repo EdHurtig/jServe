@@ -18,7 +18,7 @@ public class ThreadedSocket extends ServerSocket implements Runnable {
 	@Override
 	public void run() {
 		WebServer.logInfo("Thread Registered for port " + getLocalPort());
-		while (WebServer.getStatus() == ServerStatus.Started) {
+		while (WebServer.getStatus() == ServerStatus.Started || WebServer.getStatus() == ServerStatus.Starting ) {
 			Socket client = null;
 			
 			try {
@@ -39,7 +39,8 @@ public class ThreadedSocket extends ServerSocket implements Runnable {
             requestThread.start();  
 	       
 		}
-		
+		WebServer.logInfo("Thread Exit for port " + getLocalPort() + " Server Status = " + WebServer.getStatus() );
+
 	}
 	
 }

@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Site implements Runnable {
+public class Site implements Runnable, Configurable {
 	public Site() {}
 	public Site(int id, String name) {
 		setName(name);
@@ -25,7 +25,7 @@ public class Site implements Runnable {
 	}
 
 	public boolean setName(String name) {
-		if (Config.put("sites." + getID() + ".name", this.getName()))
+		if (Config.add("sites." + getID() + ".name", this.getName()))
 		{
 			this.name = name;
 			return true;
@@ -129,6 +129,11 @@ public class Site implements Runnable {
 	 */
 	public void triggerError(double code, String message, Exception e) {
 		//TODO:
+	}
+	@Override
+	public boolean configure() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	
