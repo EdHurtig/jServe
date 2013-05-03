@@ -81,6 +81,7 @@ public class Request implements Runnable {
 				
 				parseHeaders(headers);
 				Site site = WebServer.matchSite(variables.get("SERVER_PROTOCOL"), variables.get("HTTP_HOST"), client.getLocalPort());
+				
 				if (site != null) {
 					WebServer.logDebug("Transfering Request to site: " + site.getName());
 					site.run(this);

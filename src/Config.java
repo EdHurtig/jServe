@@ -12,6 +12,7 @@ public class Config {
 	
 	public static boolean load() { return load(null); }
 	public static boolean load(String customJSON) {
+		
 		String jsonTxt;
 		
 		if (customJSON == null)
@@ -23,11 +24,13 @@ public class Config {
 
 		currentConfig = (JSONObject) JSONSerializer.toJSON( jsonTxt );
 		
-		printAll();
+		
 		
 		
 		System.out.println(currentConfig);
 		return true;
+		
+		
 //		double coolness = json.getDouble( "coolness" );
 //	    int altitude = json.getInt( "altitude" );
 //	    JSONObject pilot = json.getJSONObject("pilot");

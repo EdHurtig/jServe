@@ -18,7 +18,7 @@ public class ThreadedSocket extends ServerSocket implements Runnable {
 	@Override
 	public void run() {
 		WebServer.logInfo("Thread Registered for port " + getLocalPort());
-		while (WebServer.status == "started") {
+		while (WebServer.getStatus() == ServerStatus.Started) {
 			Socket client = null;
 			
 			try {

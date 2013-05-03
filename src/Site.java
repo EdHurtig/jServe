@@ -1,8 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-
 public class Site implements Runnable {
 	public Site() {}
 	public Site(int id, String name) {
@@ -13,7 +11,7 @@ public class Site implements Runnable {
 	/** PROPERTIES **/
 	private int ID;  
 	private String name;
-	
+	private ServerStatus status = ServerStatus.Stopped;
 	private HashMap<String, String> settings = new HashMap<String,String>();
 	private ArrayList<Binding> bindings = new ArrayList<Binding>();
 	
@@ -53,9 +51,23 @@ public class Site implements Runnable {
 		this.settings = settings;
 	}
 	
+	public ServerStatus getStatus() {
+		return status;
+	}
+	public void setStatus(ServerStatus status) {
+		this.status = status;
+	}
 	/** METHODS **/
 	
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	//
 	public void run(Request r) {
+		WebServer.triggerInternalError("Base Site Class Run(Request r) Method was called... Should not happen.  Closing Response");
 		r.out.close();
 	}
 	
@@ -116,13 +128,10 @@ public class Site implements Runnable {
 	 * @param e
 	 */
 	public void triggerError(double code, String message, Exception e) {
-		
+		//TODO:
 	}
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
+	
+	
 	
 	
 	
