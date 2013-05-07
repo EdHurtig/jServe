@@ -9,6 +9,14 @@ import java.io.InputStreamReader;
 
 
 public class Utils {
+	public static String cPath(String path) {
+		String fixed = "";
+		for (int i = 0; i < path.length(); i ++)
+			if (path.charAt(i) == '/' && File.separatorChar != '/')
+				path = path.substring(0, i) + File.separator + path.substring(i + 1);
+		
+		return path;
+	}
 	public static byte[] readBytes(String fileName) {
 		try {
 

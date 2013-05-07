@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -6,7 +7,10 @@ import WebServer.Tests.StopWatch;
 public class GenericSite extends Site {
 	public GenericSite(int id, String name) {
 		super(id,name);
+
+		
 	}
+
 	
 	@Override
 	public void run(Request r) {
@@ -15,7 +19,7 @@ public class GenericSite extends Site {
 
 			if (getSettings().get("DOCUMENT_ROOT") != null) {
 
-				String path = getSettings().get("DOCUMENT_ROOT") + r.variables.get("REQUEST_URI") + defaultDocument;
+				String path = getSettings().get("DOCUMENT_ROOT") + Utils.cPath(r.variables.get("REQUEST_URI") + defaultDocument);
 				WebServer.logDebug("Testing for Document " + path);
 				
 				//String file = Utils.readFile(path);
@@ -41,4 +45,5 @@ public class GenericSite extends Site {
 		r.out.close();
 			
 	}
+	
 }

@@ -51,14 +51,14 @@ public class Request implements Runnable {
 	         
 	     
 			
-			if (WebServer.DEBUG) WebServer.logInfo("Connection Established for with id " + requestID);
+			WebServer.logDebug("Connection Established for with id " + requestID);
 			
 			try{
 				in = new BufferedReader(new InputStreamReader(
 						client.getInputStream()));
 				out = new PrintWriter(client.getOutputStream(), 
 						true);
-				if (WebServer.DEBUG) WebServer.logInfo("Established in and out streams for request " + requestID);
+				WebServer.logDebug("Established in and out streams for request " + requestID);
 			} catch (IOException e) {
 				WebServer.triggerInternalError("Read Failed for streams from request " + requestID);
 				return;

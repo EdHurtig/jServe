@@ -304,12 +304,15 @@ public class WebServer implements Configurable {
 	}
 	
 	public static void logDebug(String message) {
-		if (DEBUG)
-			System.out.println(message);
+		if (DEBUG) {
+			SimpleDateFormat timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+			System.out.println('[' + timestamp.format(new Date()) + "] " + message);
+		}
 	}
 	
 	public static void logInfo(String message) {
-		System.out.println(message);
+		SimpleDateFormat timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		System.out.println('[' + timestamp.format(new Date()) + "] " + message);
 	}
 
 	@Override

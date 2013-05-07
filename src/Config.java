@@ -1,34 +1,32 @@
+import java.io.File;
 import java.util.ArrayList;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import org.jsoup.*;
+import org.jsoup.nodes.*;
 import org.jsoup.parser.*;
-import java.util.HashMap;
-import net.sf.json.*;
 
-import org.apache.commons.io.IOUtils;
 
 public class Config {
 	public static final String CONFIG_FILE = "config/config.sample.json";
 	private static Document currentConfig;
 	private static boolean loaded = false;
-	
+	private static String PATH_SEPARATOR = File.separator;
 	public static boolean load() { return load(null); }
 	public static boolean load(String customHTML) {
 		
 		String html = null;
 		
 		if (customHTML == null)
-			html = Utils.readTextFile(CONFIG_FILE);
+			html = "  "; //Utils.readTextFile(CONFIG_FILE);
 		else
 			html = customHTML;
 		if (html == null)
 			return false;
 
 		
-		currentConfig = Jsoup.parse(html);
+		currentConfig = new Document(html); //Jsoup.parse(html);
 	
-		System.out.println(currentConfig);
+		WebServer.logDebug("[CONFIG]" + currentConfig);
 		
 		
 		/** EXAMPLE CONTENT **/
@@ -42,7 +40,7 @@ public class Config {
 
 		example.setBindings(exampleBindings);
 
-		example.getSettings().put("DOCUMENT_ROOT", "/Users/ehurtig/desktop/bootstrap-master-2/docs/");
+		example.getSettings().put("DOCUMENT_ROOT", getAppPath().getParentFile().getPath() + Utils.cPath("/www/Example"));
 		example.getSettings().put("DefaultDocuments", "index.php,index.html");
 		
 		WebServer.sites.add(example);
@@ -66,7 +64,7 @@ public class Config {
 	public static boolean add(String selector, String value) {
 		
 		String newFile = currentConfig.toString();
-		WebServer.logInfo("Writing new Configuration as: " + newFile);
+		//WebServer.logInfo("Writing new Configuration as: " + newFile);
 		//return Utils.writeTextFile(CONFIG_FILE,newFile);
 		return true;
 	}
@@ -92,5 +90,8 @@ public class Config {
 		return false;
 	}
 	
+	public static File getAppPath() {
+		return new File(WebServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+	}
 	
 }
