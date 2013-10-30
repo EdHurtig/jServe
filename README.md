@@ -18,6 +18,6 @@ in how it works by all means check it out, but I cannot support this project at 
 Bugs
 ====
 
-I am aware of a ton of issues with this project, most relating to the HTTP protocaol headers, and I would love to fix
+I am aware of a ton of issues with this project, most relating to the HTTP protocaol headers. I would love to fix
 them at some point, but again this was an acedemic project from high school that I can't support.
 
