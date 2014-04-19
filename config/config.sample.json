@@ -33,7 +33,7 @@
             "#shortname": "mymod",
             "#settings": {
                  "#key": "value",
- 			}
+             }
         }
     ]
 }

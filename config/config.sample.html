@@ -1,0 +1,121 @@
+<html>
+ <head> 
+  <!-- 
+Everything in comments is ignored, so we are going to discuss this file here
+
+The jServe configuration is stored 100% in HTML, you could load this page up with some CSS and you would have a readable configuration page.
+
+That's the beauty of it.  
+
+We do take the liberty of throwing in our own tags to be more like XML but if you use chrome, safari, or FF you will still get to see a full config file rendered
+--> 
+ </head> 
+ <body> 
+  <section id="server"> 
+   <name>
+     jServe 
+   </name> 
+   <hostname>
+     jServe.ht.gs 
+   </hostname> 
+   <modules>
+       <loadmodule classname="jServe.Plugins.HTTPErrors"  path="bin\jServe\Plugins\HTTPErrors\HTTPErrors.class" />
+   </modules>
+  </section> 
+  <section id="sites"> 
+   <site id="2"> 
+    <name>
+      jServe Test Site 
+    </name> 
+    <documentroot>
+      D:\files\linux\
+    </documentroot> 
+    <errors> 
+     <add code="400" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\400.html" /> 
+     <add code="401" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\401.html" /> 
+     <add code="402" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\402.html" /> 
+     <add code="403" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\403.html" /> 
+     <add code="404" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\404.html" /> 
+     <add code="405" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\405.html" /> 
+     <add code="500" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\500.html" /> 
+    </errors> 
+    <bindings> 
+     <binding host="localhost" port="8888" protocol="HTTP" local_ip="*" remote_ip="*" /> 
+     <binding host="localhost" port="8080" protocol="HTTP" local_ip="*" remote_ip="*" /> 
+     <binding host="jserve.dev.ht.gs" port="8080" protocol="HTTP" local_ip="*" remote_ip="*" /> 
+    </bindings> 
+    <defaultdocuments>
+        <add>index.html</add>
+        <add>index.php</add>
+        <add>default.html</add>
+        <add>index.txt</add>
+    </defaultdocuments>
+    <settings>
+        <setting key="autostart" value="true" />
+    </settings>
+    <authentication> 
+     <anonymous enabled="" /> 
+     <basic disabled="" /> 
+    </authentication> 
+   </site> 
+   <site id="3"> 
+    <name>
+      Hurtig Technologies Dev Sites 
+    </name> 
+    <documentroot>
+      C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\Example\ 
+    </documentroot> 
+    <errors> 
+     <add code="400" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\400.html" /> 
+     <add code="401" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\401.html" /> 
+     <add code="402" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\402.html" /> 
+     <add code="403" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\403.html" /> 
+     <add code="404" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\404.html" /> 
+     <add code="405" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\405.html" /> 
+     <add code="500" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\500.html" /> 
+    </errors> 
+    <bindings> 
+     <binding host="*.dev.ht.gs" port="8080" protocol="HTTP" local_ip="*" remote_ip="*"></binding> 
+    </bindings> 
+    <defaultdocuments>
+        <add>index.html</add>
+        <add>index.php</add>
+        <add>default.html</add>
+        <add>index.txt</add>
+    </defaultdocuments>
+    <settings>
+        <setting key="autostart" value="true" />
+    </settings>
+    <authentication> 
+     <anonymous enabled="" /> 
+     <basic disabled="" /> 
+    </authentication> 
+   </site> 
+   <site id="4">
+    <type>EchoSite</type>
+    <name>
+      Echo Site
+    </name> 
+    <errors> 
+     <add code="400" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\400.html" /> 
+     <add code="401" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\401.html" /> 
+     <add code="402" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\402.html" /> 
+     <add code="403" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\403.html" /> 
+     <add code="404" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\404.html" /> 
+     <add code="405" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\405.html" /> 
+     <add code="500" path="C:\Users\hurtige.HURTIGTECH\Documents\GitHub\jServe\www\errors\500.html" /> 
+    </errors> 
+    <bindings> 
+     <binding host="*" port="2323" protocol="HTTP" local_ip="*" remote_ip="*"></binding> 
+    </bindings> 
+    <settings>
+        <setting key="autostart" value="true" />
+    </settings>
+    <authentication> 
+     <anonymous enabled /> 
+     <basic disabled /> 
+    </authentication> 
+   </site> 
+  </section>   
+ </body>
+</html>
