@@ -1,4 +1,5 @@
 package jServe.Core;
+
 import jServe.Sites.Site;
 
 import java.io.BufferedReader;
@@ -11,12 +12,12 @@ import java.util.HashMap;
 
 public class Request implements Runnable {
     public HashMap<String, String> variables = new HashMap<String, String>();
-    private Socket client;
-    private int requestID = WebServer.lastRequestID++;
+    private final Socket client;
+    private final int requestID = WebServer.lastRequestID++;
     public BufferedReader in = null;
     public PrintWriter out = null;
     public String headers = "";
-    
+
     public Request(Socket client) {
         this.client = client;
     }
@@ -38,9 +39,7 @@ public class Request implements Runnable {
         }
         for (int i = 1; i < headers.length; i++) {
             String[] HTTPvar = headers[i].split(":");
-            variables.put("HTTP_"
-                    + HTTPvar[0].toUpperCase().replace('-', '_').trim(),
-                    HTTPvar[1].trim());
+            variables.put("HTTP_" + HTTPvar[0].toUpperCase().replace('-', '_').trim(), HTTPvar[1].trim());
         }
     }
 
@@ -49,23 +48,22 @@ public class Request implements Runnable {
         Long start = System.nanoTime();
         try {
             client.setSoTimeout(10000);
-        } catch (SocketException e) {
-            WebServer.triggerInternalError("Socket Timeout Set failed for socket on port "
-                            + client.getLocalPort() + ": " + e.getMessage());
+        }
+        catch (SocketException e) {
+            WebServer.triggerInternalError("Socket Timeout Set failed for socket on port " + client.getLocalPort()
+                                           + ": " + e.getMessage());
             return;
         }
 
         WebServer.logDebug("Connection Established for with id " + requestID);
 
         try {
-            in = new BufferedReader(new InputStreamReader(
-                    client.getInputStream()));
+            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             out = new PrintWriter(client.getOutputStream(), true);
-            WebServer.logDebug("Established in and out streams for request "
-                    + requestID);
-        } catch (IOException e) {
-            WebServer.triggerInternalError("Read Failed for streams from request "
-                            + requestID);
+            WebServer.logDebug("Established in and out streams for request " + requestID);
+        }
+        catch (IOException e) {
+            WebServer.triggerInternalError("Read Failed for streams from request " + requestID);
             return;
         }
 
@@ -77,35 +75,36 @@ public class Request implements Runnable {
             try {
                 while ((line = in.readLine()).length() != 0) {
                     headers += line + "\n";
-                    WebServer.logInfo("Reading Line " + lineNum++
-                            + " from request: " + requestID + ": " + line);
+                    WebServer.logInfo("Reading Line " + lineNum++ + " from request: " + requestID + ": " + line);
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 break;
             }
 
             parseHeaders(headers);
 
-            Site site = WebServer.matchSite(variables.get("SERVER_PROTOCOL"),
-                    variables.get("HTTP_HOST"), client.getLocalPort());
+            Site site = WebServer.matchSite(variables.get("SERVER_PROTOCOL"), variables.get("HTTP_HOST"),
+                    client.getLocalPort());
 
             if (site != null) {
-                WebServer.logDebug("Transfering Request to site: "
-                        + site.getName());
+                WebServer.logDebug("Transfering Request to site: " + site.getName());
+
                 site.run(this);
-            } else
+            }
+            else {
                 out.close();
+            }
             WebServer.logInfo("Closed Request " + requestID);
-             
-            Double estimated = (double)(System.nanoTime() - start) / 1000000000.0 ;
+
+            Double estimated = (System.nanoTime() - start) / 1000000000.0;
             WebServer.requestTimes.put(getRequestID(), estimated);
-            
-             WebServer.logInfo("Request " + requestID + " was completed in " +
-                                 estimated + " seconds.  Average of " +
-                                 Utils.sum(WebServer.requestTimes.values().toArray(new Double[0])) + " Seconds / "+
-                                 WebServer.requestTimes.size() + " Requests is " +
-                                 Utils.sum(WebServer.requestTimes.values().toArray(new Double[0])) /
-                                 (double)(WebServer.requestTimes.size()) );
+
+            WebServer.logInfo("Request " + requestID + " was completed in " + estimated + " seconds.  Average of "
+                              + Utils.sum(WebServer.requestTimes.values().toArray(new Double[0])) + " Seconds / "
+                              + WebServer.requestTimes.size() + " Requests is "
+                              + Utils.sum(WebServer.requestTimes.values().toArray(new Double[0]))
+                              / (WebServer.requestTimes.size()));
         }
     }
 
@@ -120,7 +119,7 @@ public class Request implements Runnable {
         }
         return null;
     }
-    
+
     public void close() {
         Plugins.do_action("request_close", this);
         out.close();

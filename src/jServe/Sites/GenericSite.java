@@ -1,5 +1,6 @@
 package jServe.Sites;
 
+import jServe.Core.MIME;
 import jServe.Core.Request;
 import jServe.Core.Utils;
 import jServe.Core.WebServer;
@@ -31,11 +32,24 @@ public class GenericSite extends Site {
                 String path = getSettings().get("DOCUMENT_ROOT") + Utils.cPath(uri + defaultDocument);
                 WebServer.logDebug("Testing for Document " + path);
 
+                System.out.println("Reading: " + path);
                 // String file = Utils.readFile(path);
                 byte[] file = Utils.readBytes(path);
-
+                System.out.println("Read: " + path);
                 if (file == null) {
                     continue;
+                }
+
+                MIME mime = MIME.getMIME(path);
+                if (mime.getTypes() != null) {
+                    try {
+                        r.getClient().getOutputStream()
+                                .write(("Content-Type: " + Utils.join('/', mime.getTypes())).getBytes());
+                    }
+                    catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
 
                 WebServer.logDebug("Found a File (" + path + ") for RequestID: " + r.getRequestID());
@@ -58,7 +72,7 @@ public class GenericSite extends Site {
             }
         }
         if ( ! found) {
-            triggerHTTPError(404);
+            triggerHTTPError(r, 404);
         }
         r.close();
     }

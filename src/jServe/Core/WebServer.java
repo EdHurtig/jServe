@@ -124,7 +124,12 @@ public class WebServer implements Configurable {
         }
 
         logInfo("Starting Server");
+
+        init();
+
         start();
+
+        Plugins.do_action("init");
 
         logInfo("--- SERVER IS UP AND RUNNING ---");
 
@@ -152,6 +157,24 @@ public class WebServer implements Configurable {
         }
         logDebug("Thread " + t.getName() + " - " + t.getId() + " is already running in the registry");
         return false;
+    }
+
+    public static void init() {
+        ArrayList<String> jsmime = new ArrayList<String>();
+        jsmime.add("text");
+        jsmime.add("javascript");
+        MIME.registerMIME("js", jsmime);
+
+        ArrayList<String> cssmime = new ArrayList<String>();
+        cssmime.add("text");
+        cssmime.add("css");
+        MIME.registerMIME("css", cssmime);
+
+        ArrayList<String> htmlmime = new ArrayList<String>();
+        htmlmime.add("text");
+        htmlmime.add("html");
+        MIME.registerMIME("html", htmlmime);
+
     }
 
     /** SERVER AND SITE START AND STOP METHODS **/
