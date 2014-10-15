@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
@@ -280,6 +281,24 @@ public class Utils {
         }
         str += arr[arr.length - 1];
         return str;
+    }
+
+    public static String join(String delimiter, ArrayList<String> arr) {
+        String str = "";
+        for (String s : arr) {
+            str += s + delimiter;
+        }
+
+        return str.substring(0, - delimiter.length());
+    }
+
+    public static String join(char delimiter, ArrayList<String> arr) {
+        String str = "";
+        for (String s : arr) {
+            str += s + delimiter;
+        }
+
+        return str.substring(0, - 1);
     }
 
     public static String surroundLR(String s, String lr) {
