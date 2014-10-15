@@ -228,4 +228,12 @@ public class CommandLine implements Runnable {
     public String readLine(Object prompt) {
         return Utils.readLine(prompt, WebServer.inputStream);
     }
+
+    /**
+     * sends a pluggable error message to the user when a command was called
+     * with an unsupported parameter
+     */
+    public void unsupportedArg() {
+        WebServer.triggerPluggableError("[CLI] Command was passed an unsupported parameter");
+    }
 }
