@@ -35,12 +35,12 @@ public class StopCommand extends CLICommand {
     public void run(Object arg0) {
 
         // Must be given a String[]
-        if ( ! (arg0 instanceof String[])) {
+        if ( ! (arg0 instanceof String)) {
             WebServer.COMMAND_LINE.unsupportedArg();
             return;
         }
 
-        String[] args = (String[]) arg0;
+        String[] args = ((String) arg0).split(" ");
 
         if (args.length > 1 && args[0].equals("site")) {
             Integer id = Integer.parseInt(args[1]);
@@ -70,5 +70,4 @@ public class StopCommand extends CLICommand {
             System.exit(0);
         }
     }
-
 }
