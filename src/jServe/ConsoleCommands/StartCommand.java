@@ -17,13 +17,13 @@ import jServe.Sites.Site;
  */
 public class StartCommand extends CLICommand {
     static {
-        WebServer.COMMAND_LINE.registerCommand("stop", new StartCommand());
+        WebServer.COMMAND_LINE.registerCommand("start", new StartCommand());
     }
 
     @Override
     public void run(Object arg0) {
 
-        String[] args = (String[]) arg0;
+        String[] args = ((String) arg0).split(" ");
 
         if (args.length > 1 && args[0].equals("site")) {
             Integer id = Integer.parseInt(args[1]);
