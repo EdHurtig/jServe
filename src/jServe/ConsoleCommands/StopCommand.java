@@ -16,6 +16,8 @@ import jServe.Sites.Site;
  * 2. Stop the entire server
  * 
  * jServe> stop
+ *
+ * jServe> exit
  * 
  * @author Edward Hurtig <hurtige@ccs.neu.edu>
  */
@@ -25,7 +27,7 @@ public class StopCommand extends CLICommand {
      * Register this command with the Command Line System on Application Startup
      */
     static {
-        WebServer.COMMAND_LINE.registerCommand("stop", new StopCommand());
+        WebServer.COMMAND_LINE.registerCommand(new String[] {"exit", "stop"}, new StopCommand());
     }
 
     @Override
