@@ -9,7 +9,7 @@ package jServe.Core.Exceptions;
  * @author Eddie Hurtig <hurtige@ccs.neu.edu>
  * @version 1.0, 11/05/2014
  */
-public class JServeDuplicateKeyException extends RuntimeException {
+public class JServeDuplicateKeyException extends JServeException {
     public JServeDuplicateKeyException() {
         super("A Duplicate key was found");
     }
