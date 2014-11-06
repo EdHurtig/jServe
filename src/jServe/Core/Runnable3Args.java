@@ -16,6 +16,11 @@ public abstract class Runnable3Args<T,U,V> extends Runnable2Args<T, U> implement
     protected V arg2;
 
     /**
+     * Default Constructor
+     */
+    public Runnable3Args() {}
+
+    /**
      * Constructs this Runnable with the three Args
      * @param arg0 The First Argument
      * @param arg1 The Second Argument

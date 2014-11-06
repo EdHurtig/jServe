@@ -15,6 +15,11 @@ public abstract class Runnable2Args<T,U> extends Runnable1Arg<T> implements Runn
     protected U arg1;
 
     /**
+     * Default Constructor
+     */
+    public Runnable2Args() {}
+
+    /**
      * Constructs this Runnable with the two Args
      * @param arg0 The First Argument
      * @param arg1 The Second Argument

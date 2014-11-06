@@ -17,6 +17,11 @@ public abstract class Runnable4Args<T, U, V, W> extends Runnable3Args<T, U, V> i
     protected W arg3;
 
     /**
+     * Default Constructor
+     */
+    public Runnable4Args() {}
+
+    /**
      * Constructs this Runnable with the four Args
      * @param arg0 The First Argument
      * @param arg1 The Second Argument

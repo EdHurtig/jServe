@@ -14,6 +14,11 @@ public abstract class Runnable1Arg<T> implements Runnable{
     protected T arg0;
 
     /**
+     * Default Constructor
+     */
+    public Runnable1Arg() {}
+
+    /**
      * Constructs this Runnable with the one Arg
      * @param arg0 The First Argument
      */
