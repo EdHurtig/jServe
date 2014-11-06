@@ -72,11 +72,38 @@ public class CommandArgs {
 
             boolean inQuote = false;
             char prevChar = 0;
+            HashMap<Integer, String> params = new HashMap<Integer, String>();
+            int argnum = 0;
+            String currentParam = "";
             for (int i = 0; i < raw.length(); i++) {
+
                 if (raw.charAt(i) == '"' && prevChar != '\\') {
-
+                    // If we were in a quote... we are no longer in a quote
+                    inQuote = ! inQuote;
                 }
+                else if (raw.charAt(i) == '\\' && prevChar == '\\') {
+                    // Reset the Escape sequence so that we don't escape the
+                    // next character
+                    prevChar = 0;
+                    currentParam += '\\';
+                }
+                else if (raw.charAt(i) == ' ' && ! inQuote) {
+                    // Don't add if there is nothing in the currentParam (i.e.
+                    // double spaces between params)
+                    if ( ! currentParam.equals("")) {
+                        params.put(argnum, currentParam);
 
+                        // Increment Arg Number
+                        argnum++;
+
+                        // Reset current Param to "" because we are about to
+                        // start the next param
+                        currentParam = "";
+                    }
+                }
+                else {
+                    currentParam += raw.charAt(i);
+                }
             }
 
             break;
