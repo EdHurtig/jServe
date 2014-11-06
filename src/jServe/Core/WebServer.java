@@ -18,6 +18,8 @@ import java.util.Map;
 /**
  * The Main Web Server Class for the entire jServe.
  * 
+ * Contains the main() function for the server
+ * 
  * @author Edward Hurtig <hurtige@ccs.neu.edu>
  * @version Aug 13, 2014
  */
@@ -70,10 +72,19 @@ public class WebServer implements Configurable {
      */
     public static String server_name = null;
 
+    /**
+     * The hostname of the server... a unique fqdn identifier for the server
+     */
     public static String server_hostname = null;
 
+    /**
+     * List of Sockets that this server is using
+     */
     public static ArrayList<ThreadedSocket> sockets = new ArrayList<ThreadedSocket>();
 
+    /**
+     * Threads that are currently running
+     */
     public static HashMap<Thread, Runnable> threadRegistry = new HashMap<Thread, Runnable>();
 
     /**
@@ -179,7 +190,8 @@ public class WebServer implements Configurable {
 
     /** SERVER AND SITE START AND STOP METHODS **/
     /**
-    * 
+    * Restarts the entire server. Stops all sites, reloads config, starts sites again
+    * @return boolean True on success, false on failure
     */
     public static boolean restart() {
 
@@ -204,7 +216,7 @@ public class WebServer implements Configurable {
     /**
      * Starts the entire Server
      * 
-     * @return Boolean
+     * @return boolean True on success, false on failure
      */
     public static boolean start() {
         if (status != ServerStatus.Stopped) {
@@ -232,7 +244,7 @@ public class WebServer implements Configurable {
     /**
      * Stops the entire server and all sites
      * 
-     * @return Whether the stop was successfull
+     * @return Whether the stop was successful
      */
     public static boolean stop() {
         if (status != ServerStatus.Started) {
@@ -241,15 +253,18 @@ public class WebServer implements Configurable {
             return false;
         }
         setStatus(ServerStatus.Stopping);
-        boolean errors = false;
-
+        ServerError errors = new ServerError();
+        
         Config.saveSiteStates();
 
         for (Site s : sites) {
-            errors = errors || ! stop(s);
+            if (! stop(s)) {
+                errors.add(new RuntimeException("Failed to Stop Site: " + s.getName()));
+            }
         }
-
-        if (errors) {
+        
+        // Check if there was an error
+        if (errors.any()) {
             status = ServerStatus.Error;
             return false;
         }
