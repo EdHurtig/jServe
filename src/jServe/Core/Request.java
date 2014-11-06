@@ -48,10 +48,9 @@ public class Request implements Runnable {
         Long start = System.nanoTime();
         try {
             client.setSoTimeout(10000);
-        }
-        catch (SocketException e) {
+        } catch (SocketException e) {
             WebServer.triggerInternalError("Socket Timeout Set failed for socket on port " + client.getLocalPort()
-                                           + ": " + e.getMessage());
+                    + ": " + e.getMessage());
             return;
         }
 
@@ -61,8 +60,7 @@ public class Request implements Runnable {
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             out = new PrintWriter(client.getOutputStream(), true);
             WebServer.logDebug("Established in and out streams for request " + requestID);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             WebServer.triggerInternalError("Read Failed for streams from request " + requestID);
             return;
         }
@@ -77,8 +75,7 @@ public class Request implements Runnable {
                     headers += line + "\n";
                     WebServer.logInfo("Reading Line " + lineNum++ + " from request: " + requestID + ": " + line);
                 }
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 break;
             }
 
@@ -91,8 +88,7 @@ public class Request implements Runnable {
                 WebServer.logDebug("Transfering Request to site: " + site.getName());
 
                 site.run(this);
-            }
-            else {
+            } else {
                 out.close();
             }
             WebServer.logInfo("Closed Request " + requestID);
@@ -101,10 +97,10 @@ public class Request implements Runnable {
             WebServer.requestTimes.put(getRequestID(), estimated);
 
             WebServer.logInfo("Request " + requestID + " was completed in " + estimated + " seconds.  Average of "
-                              + Utils.sum(WebServer.requestTimes.values().toArray(new Double[0])) + " Seconds / "
-                              + WebServer.requestTimes.size() + " Requests is "
-                              + Utils.sum(WebServer.requestTimes.values().toArray(new Double[0]))
-                              / (WebServer.requestTimes.size()));
+                    + Utils.sum(WebServer.requestTimes.values().toArray(new Double[0])) + " Seconds / "
+                    + WebServer.requestTimes.size() + " Requests is "
+                    + Utils.sum(WebServer.requestTimes.values().toArray(new Double[0]))
+                    / (WebServer.requestTimes.size()));
         }
     }
 

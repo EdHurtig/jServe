@@ -3,12 +3,12 @@ package jServe.Core;
 /**
  * Describes a Runnable that has a run function that accepts arguments.
  *
- * @author Eddie Hurtig <hurtige@ccs.neu.edu>
  * @param <T> The type of the first argument on the Run function
  * @param <U> The type of the second argument on the Run function
  * @param <V> The type of the third argument on the Run function
+ * @author Eddie Hurtig <hurtige@ccs.neu.edu>
  */
-public abstract class Runnable3Args<T,U,V> extends Runnable2Args<T, U> implements Runnable{
+public abstract class Runnable3Args<T, U, V> extends Runnable2Args<T, U> implements Runnable {
 
     /**
      * The Third Argument
@@ -18,10 +18,12 @@ public abstract class Runnable3Args<T,U,V> extends Runnable2Args<T, U> implement
     /**
      * Default Constructor
      */
-    public Runnable3Args() {}
+    public Runnable3Args() {
+    }
 
     /**
      * Constructs this Runnable with the three Args
+     *
      * @param arg0 The First Argument
      * @param arg1 The Second Argument
      * @param arg2 The Third Argument
@@ -48,5 +50,5 @@ public abstract class Runnable3Args<T,U,V> extends Runnable2Args<T, U> implement
     public void run() {
         this.run(arg0, arg1, arg2);
     }
-    
+
 }

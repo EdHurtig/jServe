@@ -5,25 +5,32 @@ import jServe.Sites.Site;
 
 /**
  * Starts the Server or a specific site
- * 
- * 
- * @example jServe> start
- * @example jServe> start site
- * @example jServe> start
- * @example jServe> start
- * 
+ * <p/>
+ * <p/>
+ * jServe> start
+ * jServe> start site <id>
+ *
  * @author Edward Hurtig <hurtige@ccs.neu.edu>
  * @version Aug 13, 2014
  */
 public class StartCommand extends CLICommand {
+
+    /**
+     * Register the command
+     */
     static {
-        WebServer.COMMAND_LINE.registerCommand("start", new StartCommand());
+        register("start", new StartCommand());
     }
 
+    /**
+     * The Run function.  Starts the entire server or a specific site
+     *
+     * @param arg0 The Arguments for this command
+     */
     @Override
-    public void run(Object arg0) {
+    public void run(CommandArgs arg0) {
 
-        String[] args = ((String) arg0).split(" ");
+        String[] args = arg0.getRawArgs().split(" ");
 
         if (args.length > 1 && args[0].equals("site")) {
             Integer id = Integer.parseInt(args[1]);
@@ -32,16 +39,13 @@ public class StartCommand extends CLICommand {
 
             if (site == null) {
                 System.err.println("No Site with ID " + id);
-            }
-            else {
+            } else {
                 WebServer.start(site);
             }
-        }
-        else {
+        } else {
             if (WebServer.getStatus() == jServe.Core.ServerStatus.Started) {
                 System.err.println("Server is already started");
-            }
-            else {
+            } else {
                 WebServer.logInfo("Server is starting");
 
                 WebServer.start();

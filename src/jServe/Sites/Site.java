@@ -20,7 +20,9 @@ public abstract class Site implements Runnable, Configurable {
         ID = id;
     }
 
-    /** PROPERTIES **/
+    /**
+     * PROPERTIES *
+     */
     int ID;
     String name;
     ServerStatus status = ServerStatus.Stopped;
@@ -30,7 +32,9 @@ public abstract class Site implements Runnable, Configurable {
     ArrayList<String> defaultDocuments = new ArrayList<String>();
     Request currentRequest;
 
-    /** GETTERS/SETTERS **/
+    /**
+     * GETTERS/SETTERS *
+     */
 
     public int getID() {
         return ID;
@@ -81,7 +85,7 @@ public abstract class Site implements Runnable, Configurable {
     }
 
     public void setDefaultDocuments(ArrayList<String> defaultDocuments) {
-        if ( ! defaultDocuments.contains("")) {
+        if (!defaultDocuments.contains("")) {
             defaultDocuments.add(0, "");
         }
 
@@ -96,7 +100,9 @@ public abstract class Site implements Runnable, Configurable {
     @Override
     public void run() {
         onStart();
-    };
+    }
+
+    ;
 
     /**
      * Method that runs when the site starts up called directly by run() from
@@ -106,7 +112,7 @@ public abstract class Site implements Runnable, Configurable {
 
     /**
      * Runs the site with the given Request
-     * 
+     *
      * @param r
      */
     public abstract void run(Request r);
@@ -118,43 +124,43 @@ public abstract class Site implements Runnable, Configurable {
     /** ERROR HANDLING API FRAMEWORK **/
 
     /**
-     * @overload
      * @param code
+     * @overload
      */
     public void triggerHTTPError(Request r, int code) {
         triggerHTTPError(r, (double) code, (String) null);
     }
 
     /**
-     * @overload
      * @param code
      * @param message
+     * @overload
      */
     public void triggerHTTPError(Request r, int code, String message) {
         triggerHTTPError(r, (double) code, message);
     }
 
     /**
-     * @overload
      * @param code
      * @param ex
+     * @overload
      */
     public void triggerHTTPError(Request r, int code, Exception ex) {
         triggerHTTPError(r, (double) code, ex);
     }
 
     /**
-     * @overload
      * @param code
+     * @overload
      */
     public void triggerHTTPError(Request r, double code) {
         triggerHTTPError(r, code, (String) null);
     }
 
     /**
-     * @overload
      * @param code
      * @param message
+     * @overload
      */
     public void triggerHTTPError(Request r, double code, String message) {
         triggerHTTPError(r, code, message, null);
@@ -162,10 +168,10 @@ public abstract class Site implements Runnable, Configurable {
 
     /**
      * API for HTTP Errors.
-     * 
-     * @overload
+     *
      * @param code
      * @param e
+     * @overload
      */
     public void triggerHTTPError(Request r, double code, Exception e) {
         triggerHTTPError(r, code, null, e);
@@ -173,16 +179,16 @@ public abstract class Site implements Runnable, Configurable {
 
     /**
      * API for HTTP Errors. [Overload Master]
-     * 
-     * @overload master
+     *
      * @param code
      * @param message
      * @param e
+     * @overload master
      */
     public void triggerHTTPError(Request r, double code, String message, Exception e) {
-        Plugins.do_action("http_error_" + code, new Object[] { this, message, e });
+        Plugins.do_action("http_error_" + code, new Object[]{this, message, e});
         WebServer.logInfo("[HTTP_ERROR] Site: " + getID() + " HTTP/" + code + ": " + message + " Exception: "
-                          + (e instanceof Exception ? e.getMessage() : "null"));
+                + (e instanceof Exception ? e.getMessage() : "null"));
 
     }
 
@@ -193,7 +199,7 @@ public abstract class Site implements Runnable, Configurable {
 
     /**
      * Utility Method: Determines if the Site is stopped
-     * 
+     *
      * @return True if the server is stopped, otherwise False
      */
     public boolean isStopped() {
@@ -202,7 +208,7 @@ public abstract class Site implements Runnable, Configurable {
 
     /**
      * Utility Method: Determines if the Site is started
-     * 
+     *
      * @return True if the server is started, otherwise False
      */
     public boolean isStarted() {
@@ -212,9 +218,9 @@ public abstract class Site implements Runnable, Configurable {
     /**
      * Utility Method: Determines if the Site has encountered a fatal error and
      * stopped
-     * 
+     *
      * @return True if the server is has encountered a fatal error and stopped,
-     *         otherwise False
+     * otherwise False
      */
     public boolean isError() {
         return (status == ServerStatus.Error);
@@ -222,7 +228,7 @@ public abstract class Site implements Runnable, Configurable {
 
     /**
      * Utility Method: Determines if the Site is in the process of stopping
-     * 
+     *
      * @return True if the server is stopping, otherwise False
      */
     public boolean isStopping() {
@@ -231,7 +237,7 @@ public abstract class Site implements Runnable, Configurable {
 
     /**
      * Utility Method: Determines if the Site is in the process of starting
-     * 
+     *
      * @return True if the server is starting, otherwise False
      */
     public boolean isStarting() {
@@ -240,7 +246,7 @@ public abstract class Site implements Runnable, Configurable {
 
     /**
      * Utility Method: Determines if the Site is in the process of restarting
-     * 
+     *
      * @return True if the server is restarting, otherwise False
      */
     public boolean isRestarting() {

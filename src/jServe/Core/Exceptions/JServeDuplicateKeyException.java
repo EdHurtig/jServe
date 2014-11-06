@@ -13,6 +13,7 @@ public class JServeDuplicateKeyException extends JServeException {
     public JServeDuplicateKeyException() {
         super("A Duplicate key was found");
     }
+
     public JServeDuplicateKeyException(Object key) {
         super("A Duplicate key '" + key.toString() + "' was found");
     }

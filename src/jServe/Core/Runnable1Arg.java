@@ -3,10 +3,10 @@ package jServe.Core;
 /**
  * Describes a Runnable that has a run function that accepts arguments.
  *
- * @author Eddie Hurtig <hurtige@ccs.neu.edu>
  * @param <T> The type of the first argument on the Run function
+ * @author Eddie Hurtig <hurtige@ccs.neu.edu>
  */
-public abstract class Runnable1Arg<T> implements Runnable{
+public abstract class Runnable1Arg<T> implements Runnable {
 
     /**
      * The First Argument
@@ -16,10 +16,12 @@ public abstract class Runnable1Arg<T> implements Runnable{
     /**
      * Default Constructor
      */
-    public Runnable1Arg() {}
+    public Runnable1Arg() {
+    }
 
     /**
      * Constructs this Runnable with the one Arg
+     *
      * @param arg0 The First Argument
      */
     public Runnable1Arg(T arg0) {
@@ -40,4 +42,5 @@ public abstract class Runnable1Arg<T> implements Runnable{
      */
     public void run() {
         run(this.arg0);
-    }}
+    }
+}

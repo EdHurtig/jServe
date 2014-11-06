@@ -5,7 +5,7 @@ package jServe.Plugins.HTTPErrors;
  * class will get attached to the request that raised the exception and server
  * can then use the information provided by this class to respond correctly to
  * the Client and report the problem
- * 
+ *
  * @author Edward Hurtig <hurtige@ccs.neu.edu>
  * @version Oct 16, 2014
  */

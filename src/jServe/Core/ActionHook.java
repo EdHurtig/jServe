@@ -1,25 +1,26 @@
 package jServe.Core;
+
 public class ActionHook implements Comparable<ActionHook> {
-    
+
     public ActionHook(Runnable callback) {
         setCallback(callback);
     }
-    
+
     public ActionHook(Runnable callback, int priority) {
         setCallback(callback);
         setPriority(priority);
     }
-    
+
     public ActionHook(Runnable callback, int priority, int num_args) {
         setCallback(callback);
         setPriority(priority);
         setNum_args(num_args);
     }
-    
+
     private Runnable callback;
-    
+
     private int priority = 10;
-    
+
     private int num_args = 0;
 
     public Runnable getCallback() {

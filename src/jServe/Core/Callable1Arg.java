@@ -1,12 +1,13 @@
 package jServe.Core;
+
 import java.util.concurrent.Callable;
 
 /**
  * Describes a Callable that has a call function that accepts arguments.
  *
- * @author Eddie Hurtig <hurtige@ccs.neu.edu>
  * @param <R> The return type of the call function
  * @param <T> The type of the first argument on the call function
+ * @author Eddie Hurtig <hurtige@ccs.neu.edu>
  */
 public abstract class Callable1Arg<R, T> implements Callable {
 
@@ -17,6 +18,7 @@ public abstract class Callable1Arg<R, T> implements Callable {
 
     /**
      * Constructs this Callable
+     *
      * @param arg0 The First Argument
      */
     public Callable1Arg(T arg0) {
@@ -38,5 +40,5 @@ public abstract class Callable1Arg<R, T> implements Callable {
     public R call() {
         return this.call(this.arg0);
     }
-    
+
 }

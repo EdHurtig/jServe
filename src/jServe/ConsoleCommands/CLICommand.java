@@ -4,6 +4,7 @@ import static jServe.Core.WebServer.COMMAND_LINE;
 import static jServe.Core.WebServer.errorStream;
 import static jServe.Core.WebServer.inputStream;
 import static jServe.Core.WebServer.outputStream;
+
 import jServe.Core.Runnable1Arg;
 
 import java.io.InputStream;
@@ -34,25 +35,24 @@ public abstract class CLICommand extends Runnable1Arg<CommandArgs> {
      * Registers the given CLICommand cmd with the jServe CommandLine Handler
      * with the given name A user can call your CLICommand by typing the string
      * that you provide to this function Examples:
-     * 
+     * <p/>
      * jServe > list sites Will call the CLICommand with the name "list" if
      * registered and the arg0 of "sites"
-     * 
+     * <p/>
      * jServe > list Will call the CLICommand with the name "list" if registered
      * and the arg0 of ""
-     * 
+     * <p/>
      * jServe > listsites Will call the CLICommand with the name "listsites" if
      * registered and the arg0 of ""
-     * 
+     *
      * @param name The name of the command
-     * @param cmd The CLICommand to register
+     * @param cmd  The CLICommand to register
      * @return Whether the registration of the command was successful
      */
     public static void register(String name, CLICommand cmd) {
         if (COMMAND_LINE == null) {
             errorStream.println("COMMAND_LINE is undefined, cannot register your Command");
-        }
-        else {
+        } else {
             COMMAND_LINE.registerCommand(name, cmd);
         }
     }
@@ -61,25 +61,24 @@ public abstract class CLICommand extends Runnable1Arg<CommandArgs> {
      * Registers the given CLICommands cmd with the jServe CommandLine Handler
      * with the given list of names a user can use to call your CLICommand by typing
      * the any of the strings that you provide to this function Examples:
-     *
+     * <p/>
      * jServe > list sites Will call the CLICommand with the name "list" if
      * registered and the arg0 of "sites"
-     *
+     * <p/>
      * jServe > list Will call the CLICommand with the name "list" if registered
      * and the arg0 of ""
-     *
+     * <p/>
      * jServe > listsites Will call the CLICommand with the name "listsites" if
      * registered and the arg0 of ""
      *
      * @param names The name of the command
-     * @param cmd The CLICommand to register
+     * @param cmd   The CLICommand to register
      * @return Whether the registration of the command was successful
      */
     public static void register(String[] names, CLICommand cmd) {
         if (COMMAND_LINE == null) {
             errorStream.println("COMMAND_LINE is undefined, cannot register your Command");
-        }
-        else {
+        } else {
             COMMAND_LINE.registerCommand(names, cmd);
         }
     }

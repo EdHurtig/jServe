@@ -2,6 +2,7 @@ package jServe.Core;
 
 import com.sun.tools.internal.ws.wsdl.framework.DuplicateEntityException;
 import jServe.ConsoleCommands.CLICommand;
+import jServe.ConsoleCommands.CommandArgs;
 import jServe.Core.Exceptions.JServeDuplicateKeyException;
 import org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName;
 
@@ -10,7 +11,6 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 
 public class CommandLine implements Runnable {
-
 
 
     public void start() {
@@ -60,23 +60,19 @@ public class CommandLine implements Runnable {
                             }
                             processShellCommand(cmd);
                         }
-                    }
-                    else {
+                    } else {
                         processShellCommand(cmd.substring(cmd.indexOf(' ')));
                     }
-                }
-                else {
+                } else {
                     proccessCommand(cmd);
                 }
 
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 System.err.println("An Error Occured In the System");
                 e.printStackTrace();
                 try {
                     Thread.sleep(1);
-                }
-                catch (InterruptedException e1) {
+                } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
             }
@@ -85,7 +81,7 @@ public class CommandLine implements Runnable {
 
     /**
      * Determines whether to keep the CommandLine running
-     * 
+     *
      * @return Whether to keep the server running for another tick
      */
     public boolean keepRunning() {
@@ -94,7 +90,7 @@ public class CommandLine implements Runnable {
 
     /**
      * Runs raw command line code
-     * 
+     *
      * @param cmd The Shell cmd to execute
      */
     public void processShellCommand(String cmd) {
@@ -107,7 +103,7 @@ public class CommandLine implements Runnable {
                     new BufferedReader(new InputStreamReader(p.getInputStream()));
 
             String line;
-            while ((line = reader.readLine())!= null) {
+            while ((line = reader.readLine()) != null) {
                 println(line);
             }
 
@@ -120,48 +116,45 @@ public class CommandLine implements Runnable {
     /**
      * Takes a string command and determines if the command is registered and if
      * so it runs it
-     * 
+     *
      * @param cmd The command to process
      */
     public void proccessCommand(String cmd) {
         String name = cmd;
-        if (cmd.indexOf(' ') != - 1) {
+        if (cmd.indexOf(' ') != -1) {
             name = cmd.substring(0, cmd.indexOf(' '));
         }
 
         if (commands.containsKey(name)) {
             String args = "";
-            if (cmd.indexOf(' ') != - 1) {
+            if (cmd.indexOf(' ') != -1) {
                 args = cmd.substring(0, cmd.indexOf(' '));
             }
             try {
-                commands.get(name).run(args);
-            }
-            catch (Exception e) {
+                CommandArgs arg0 = new CommandArgs(name, cmd.substring(name.length()));
+                arg0.setCommandline(this);
+                commands.get(name).execute(arg0);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
-        }
-        else {
+        } else {
             println("Command Not Found");
         }
     }
 
     /**
      * Registers the given command (callback) with the given name
-     * 
-     * @param name
-     *            The Name of the command that will be matched
-     * @param callback
-     *            The CLICommand that will be called back with the arguments
+     *
+     * @param name     The Name of the command that will be matched
+     * @param callback The CLICommand that will be called back with the arguments
      * @return True if the command was registered, otherwise False
      */
     public void registerCommand(String name, CLICommand callback) {
         name = name.toLowerCase();
         if (commands.containsKey(name)) {
             throw new JServeDuplicateKeyException(name);
-        }
-        else {
+        } else {
             commands.put(name, callback);
         }
     }
@@ -169,12 +162,10 @@ public class CommandLine implements Runnable {
     /**
      * Registers the given command (callback) with the given names
      *
-     * @param names
-     *            The Name of the command that will be matched
-     * @param callback
-     *            The CLICommand that will be called back with the arguments
+     * @param names    The Name of the command that will be matched
+     * @param callback The CLICommand that will be called back with the arguments
      * @return True if all names for the command were successfully registered, false if no names were provided
-     *         or on failure
+     * or on failure
      */
     public void registerCommand(String[] names, CLICommand callback) {
         // Not successful if names is empty.
@@ -201,9 +192,8 @@ public class CommandLine implements Runnable {
 
     /**
      * Removes the command with the given name from the commands list
-     * 
-     * @param name
-     *            The name of the command to remove
+     *
+     * @param name The name of the command to remove
      * @return True if the command was removed, otherwise False
      */
     public boolean unregisterCommand(String name) {
@@ -223,10 +213,9 @@ public class CommandLine implements Runnable {
 
     /**
      * Reads a command from the console and parses it into cmd and cmdl
-     * 
-     * @param prompt
-     *            An object to prompt the user with before requesting the next
-     *            command
+     *
+     * @param prompt An object to prompt the user with before requesting the next
+     *               command
      */
     public void readCommand(Object prompt) {
         cmd = Utils.readLine(prompt).trim();
@@ -235,9 +224,8 @@ public class CommandLine implements Runnable {
 
     /**
      * prints the Object o through the WebServer OutputStream
-     * 
-     * @param o
-     *            The Object to print
+     *
+     * @param o The Object to print
      */
     public void print(Object o) {
         WebServer.outputStream.print(o);
@@ -253,9 +241,8 @@ public class CommandLine implements Runnable {
     /**
      * Prints the Object o through the WebServer OutputStream with a newline
      * afterwards
-     * 
-     * @param o
-     *            The Object to print
+     *
+     * @param o The Object to print
      */
     public void println(Object o) {
         WebServer.outputStream.println(o);
@@ -263,7 +250,7 @@ public class CommandLine implements Runnable {
 
     /**
      * Reads a single line from the console (Halting)
-     * 
+     *
      * @return The string that was typed/in the stream
      */
     public String readLine() {
@@ -272,12 +259,22 @@ public class CommandLine implements Runnable {
 
     /**
      * Reads a single line from the console (Halting)
-     * 
+     *
      * @param prompt
      * @return The string that was typed/in the stream
      */
     public String readLine(Object prompt) {
         return Utils.readLine(prompt, WebServer.inputStream);
+    }
+
+    /**
+     * Reads a single line from the console (Halting)
+     *
+     * @param prompt
+     * @return The string that was typed/in the stream
+     */
+    public String readLine(Object prompt, boolean hidden) {
+        return Utils.readLine(prompt, WebServer.inputStream, hidden);
     }
 
     /**

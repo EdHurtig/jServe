@@ -17,9 +17,9 @@ import java.util.Map;
 
 /**
  * The Main Web Server Class for the entire jServe.
- * 
+ * <p/>
  * Contains the main() function for the server
- * 
+ *
  * @author Edward Hurtig <hurtige@ccs.neu.edu>
  * @version Aug 13, 2014
  */
@@ -67,7 +67,7 @@ public class WebServer implements Configurable {
 
     /**
      * Server Variables
-     * 
+     * <p/>
      * The name of the Server
      */
     public static String server_name = null;
@@ -97,7 +97,9 @@ public class WebServer implements Configurable {
      */
     private static boolean crashOnInternalError = true;
 
-    /** GETTERS/SETTERS **/
+    /**
+     * GETTERS/SETTERS *
+     */
     public static ServerStatus getStatus() {
         return status;
     }
@@ -113,7 +115,9 @@ public class WebServer implements Configurable {
 
     }
 
-    /** MAIN **/
+    /**
+     * MAIN *
+     */
     public static void main(String[] rawargs) {
 
         List<String> args = Arrays.asList(rawargs);
@@ -155,12 +159,11 @@ public class WebServer implements Configurable {
     }
 
     public static boolean registerThread(Thread t, Runnable target) {
-        if ( ! threadRegistry.containsKey(t) || t.getState() == Thread.State.TERMINATED) {
+        if (!threadRegistry.containsKey(t) || t.getState() == Thread.State.TERMINATED) {
             threadRegistry.put(t, target);
             try {
                 t.start();
-            }
-            catch (IllegalThreadStateException e) {
+            } catch (IllegalThreadStateException e) {
                 triggerInternalError("Failed to start thread: " + t.getName() + " - " + t.getId());
                 return false;
             }
@@ -190,9 +193,10 @@ public class WebServer implements Configurable {
 
     /** SERVER AND SITE START AND STOP METHODS **/
     /**
-    * Restarts the entire server. Stops all sites, reloads config, starts sites again
-    * @return boolean True on success, false on failure
-    */
+     * Restarts the entire server. Stops all sites, reloads config, starts sites again
+     *
+     * @return boolean True on success, false on failure
+     */
     public static boolean restart() {
 
         for (Site s : sites) {
@@ -215,22 +219,22 @@ public class WebServer implements Configurable {
 
     /**
      * Starts the entire Server
-     * 
+     *
      * @return boolean True on success, false on failure
      */
     public static boolean start() {
         if (status != ServerStatus.Stopped) {
             triggerInternalError("[start-server] Server Status is currently: " + status
-                                 + ".  Must be stopped in order to start");
+                    + ".  Must be stopped in order to start");
             return false;
         }
         boolean errors = false;
         setStatus(ServerStatus.Starting);
-        errors = errors || ! Config.load();
+        errors = errors || !Config.load();
 
         for (Site s : sites) {
             if (Config.shouldStartSite(s)) {
-                errors = errors || ! start(s);
+                errors = errors || !start(s);
             }
         }
         if (errors) {
@@ -243,26 +247,26 @@ public class WebServer implements Configurable {
 
     /**
      * Stops the entire server and all sites
-     * 
+     *
      * @return Whether the stop was successful
      */
     public static boolean stop() {
         if (status != ServerStatus.Started) {
             triggerInternalError("[start-server] Server Status is currently: " + status
-                                 + ".  Must be started in order to stop");
+                    + ".  Must be started in order to stop");
             return false;
         }
         setStatus(ServerStatus.Stopping);
         ServerError errors = new ServerError();
-        
+
         Config.saveSiteStates();
 
         for (Site s : sites) {
-            if (! stop(s)) {
+            if (!stop(s)) {
                 errors.add(new RuntimeException("Failed to Stop Site: " + s.getName()));
             }
         }
-        
+
         // Check if there was an error
         if (errors.any()) {
             status = ServerStatus.Error;
@@ -277,8 +281,7 @@ public class WebServer implements Configurable {
         if (stop(site)) {
             if (start(site)) {
                 triggerInternalError("[Restart]: Failed to ReStart Site " + site.getName());
-            }
-            else {
+            } else {
                 triggerInternalError("[Restart]: Failed to Stop Site " + site.getName());
             }
         }
@@ -288,7 +291,7 @@ public class WebServer implements Configurable {
 
         if (site.getStatus() != ServerStatus.Stopped) {
             triggerInternalError("[Start] Didn't start site " + site.getName() + " because it is currently "
-                                 + site.getStatus());
+                    + site.getStatus());
             return false;
         }
 
@@ -315,10 +318,9 @@ public class WebServer implements Configurable {
                     try {
                         // Create the server socket
                         siteSocket = new ThreadedSocket(siteBinding.getPort());
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         triggerInternalError("Could Not Bind siteSocket for " + site.getName() + " to port "
-                                             + siteBinding.getPort());
+                                + siteBinding.getPort());
                         errors = true;
                         continue;
                     }
@@ -335,13 +337,12 @@ public class WebServer implements Configurable {
                     registerThread(socketThread, siteSocket);
                 }
 
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 triggerInternalError("Failed to Start " + site.getName());
                 errors = true;
             }
         }
-        if ( ! errors) {
+        if (!errors) {
             logDebug("Registered All Threads for Site " + site.getName());
             site.setStatus(ServerStatus.Started);
             return true;
@@ -367,8 +368,7 @@ public class WebServer implements Configurable {
                 ThreadedSocket ts = getSocketForPort(b.getPort());
                 try {
                     ts.close();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     errors.add("[Stop]: Failed to close Socket on port " + ts.getLocalPort());
                 }
             }
@@ -388,8 +388,7 @@ public class WebServer implements Configurable {
         // state to error
         if (errors.size() == attemptClosings) {
             s.setStatus(ServerStatus.Started);
-        }
-        else {
+        } else {
             s.setStatus(ServerStatus.Error);
         }
 
@@ -397,7 +396,9 @@ public class WebServer implements Configurable {
 
     }
 
-    /** SITE BINDINGS **/
+    /**
+     * SITE BINDINGS *
+     */
 
     public static ThreadedSocket getSocketForPort(int port) {
         for (ThreadedSocket s : sockets) {
@@ -463,7 +464,7 @@ public class WebServer implements Configurable {
             if (s.getStatus() == ServerStatus.Started) {
                 for (Binding b : s.getBindings()) {
                     if (b.getProtocol().equals(protocol) && (b.getDomain().equals("*") || b.getDomain().equals(host))
-                        && port == b.getPort()) {
+                            && port == b.getPort()) {
                         return s;
                     }
                 }
@@ -473,7 +474,9 @@ public class WebServer implements Configurable {
         return null;
     }
 
-    /** ERROR HANDLING AND LOGGING METHODS **/
+    /**
+     * ERROR HANDLING AND LOGGING METHODS *
+     */
 
     public static void triggerInternalError(String message) {
         SimpleDateFormat timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -491,8 +494,7 @@ public class WebServer implements Configurable {
                 }
                 timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
                 errorStream.println("[" + timestamp.format(new Date()) + "] [Core] ");
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
 
             }
 
@@ -525,7 +527,7 @@ public class WebServer implements Configurable {
     /**
      * Returns an array of all the ids of registered sites in the order in which
      * they were registered
-     * 
+     *
      * @return An ArrayList of the Site IDs
      */
     public static ArrayList<Integer> getSiteIDs() {

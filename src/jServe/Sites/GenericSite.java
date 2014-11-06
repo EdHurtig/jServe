@@ -19,7 +19,7 @@ public class GenericSite extends Site {
 
     @Override
     public void run(Request r) {
-        if ( ! isStarted()) {
+        if (!isStarted()) {
             return;
         }
 
@@ -45,8 +45,7 @@ public class GenericSite extends Site {
                     try {
                         r.getClient().getOutputStream()
                                 .write(("Content-Type: " + Utils.join('/', mime.getTypes())).getBytes());
-                    }
-                    catch (IOException e) {
+                    } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
@@ -56,8 +55,7 @@ public class GenericSite extends Site {
                 // r.out.println("Content-Type: text/html");
                 try {
                     r.getClient().getOutputStream().write(file);
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -66,12 +64,11 @@ public class GenericSite extends Site {
                 WebServer.logDebug("Returned " + r.getPath());
                 found = true;
                 break;
-            }
-            else {
+            } else {
                 WebServer.triggerInternalError("[DOCUMENT_ROOT] is not defined for site " + getName());
             }
         }
-        if ( ! found) {
+        if (!found) {
             triggerHTTPError(r, 404);
         }
         r.close();

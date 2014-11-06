@@ -20,7 +20,6 @@ public class Utils {
     }
 
     public static String cPath(String path) {
-        String fixed = "";
         for (int i = 0; i < path.length(); i++) {
             if (path.charAt(i) == '/' && File.separatorChar != '/') {
                 path = path.substring(0, i) + File.separator + path.substring(i + 1);
@@ -45,7 +44,7 @@ public class Utils {
             // if no subdirectory option used)
 
             File f = new File(fileName);
-            if (f.exists() && ! f.isDirectory()) {
+            if (f.exists() && !f.isDirectory()) {
                 FileInputStream fstream = new FileInputStream(fileName);
 
                 // Create a stream and reader for the file
@@ -55,8 +54,7 @@ public class Utils {
             }
             return null;
 
-        }
-        catch (Exception e) { // Catch exception if any
+        } catch (Exception e) { // Catch exception if any
             WebServer.triggerInternalError("Error Loading File: " + e.getMessage());
             return null;
         }
@@ -66,7 +64,7 @@ public class Utils {
     public static boolean writeTextFile(String fileName, String content) {
         try {
             File f = new File(fileName);
-            if (f.exists() && ! f.isDirectory() && f.canWrite()) {
+            if (f.exists() && !f.isDirectory() && f.canWrite()) {
 
                 FileWriter fw = new FileWriter(fileName);
                 BufferedWriter bw = new BufferedWriter(fw);
@@ -75,8 +73,7 @@ public class Utils {
 
                 return true;
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             WebServer.triggerInternalError("Error Writing to File: " + fileName + " error: " + e.getMessage());
         }
         return false;
@@ -88,7 +85,7 @@ public class Utils {
 
             WebServer.logDebug(f.getPath());
 
-            if (f.exists() && ! f.isDirectory()) {
+            if (f.exists() && !f.isDirectory()) {
                 FileInputStream fstream = new FileInputStream(fileName);
 
                 // Create a stream and reader for the file
@@ -109,8 +106,7 @@ public class Utils {
             }
             WebServer.logInfo("Couldn't Find File: " + fileName);
             return null;
-        }
-        catch (Exception e) { // Catch exception if any
+        } catch (Exception e) { // Catch exception if any
             WebServer.triggerInternalError("Error Loading File: " + fileName + " error: " + e.getMessage());
             return null;
         }
@@ -150,7 +146,7 @@ public class Utils {
     }
 
     public static int nthIndexOf(String str, char ch, int n) {
-        int index = - 1;
+        int index = -1;
         for (int i = 0; i < n; i++) {
             index = str.substring(index + 1).indexOf(ch) + index + 1;
         }
@@ -158,15 +154,14 @@ public class Utils {
     }
 
     public static boolean isUniqueID(Integer id, List<Integer> ids) {
-        return (ids.indexOf(id) == - 1);
+        return (ids.indexOf(id) == -1);
 
     }
 
     /**
      * returns the first integer from 1 on up that is not in the given List
-     * 
-     * @param ids
-     *            The List of ids to look for a unique id in
+     *
+     * @param ids The List of ids to look for a unique id in
      * @return The first integer from 1 on up that is not in the given List
      */
     public static int getUniqueID(List<Integer> ids) {
@@ -180,7 +175,7 @@ public class Utils {
 
     /**
      * Reads a Line from the console
-     * 
+     *
      * @return The Line that the User Input to the console
      */
     public static String readLine() {
@@ -189,9 +184,8 @@ public class Utils {
 
     /**
      * Reads a Line from the console
-     * 
-     * @param prompt
-     *            The prompt to display for the user
+     *
+     * @param prompt The prompt to display for the user
      * @return The Line from the console
      */
     public static String readLine(Object prompt) {
@@ -203,19 +197,25 @@ public class Utils {
     }
 
     public static String readLine(Object prompt, InputStream stream) {
+        return readLine(prompt, stream, false);
+    }
+
+    public static String readLine(Object prompt, InputStream stream, boolean hidden) {
         String line = null;
 
         Console c = System.console();
         if (c != null) {
-            line = c.readLine(prompt.toString());
-        }
-        else {
+            if (hidden) {
+                line = new String(c.readPassword("[%s]", prompt.toString()));
+            } else {
+                line = c.readLine(prompt.toString());
+            }
+        } else {
             System.out.print(prompt);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
             try {
                 line = bufferedReader.readLine();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 // Ignore
             }
         }
@@ -289,7 +289,7 @@ public class Utils {
             str += s + delimiter;
         }
 
-        return str.substring(0, - delimiter.length());
+        return str.substring(0, -delimiter.length());
     }
 
     public static String join(char delimiter, ArrayList<String> arr) {
@@ -298,7 +298,7 @@ public class Utils {
             str += s + delimiter;
         }
 
-        return str.substring(0, - 1);
+        return str.substring(0, -1);
     }
 
     public static String surroundLR(String s, String lr) {
@@ -338,9 +338,8 @@ public class Utils {
 
     /**
      * Returns the length of the longest String in the given String Array
-     * 
-     * @param lines
-     *            The Array to look through
+     *
+     * @param lines The Array to look through
      * @return The Length of the longest line in the array
      */
     public static int longestLine(String[] lines) {
@@ -491,22 +490,20 @@ public class Utils {
         try {
             Class.forName(className);
             return true;
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             return false;
         }
     }
 
     /**
      * Strips the Query string from a given url or path
-     * 
-     * @param path
-     *            the URL or path
+     *
+     * @param path the URL or path
      * @return The path without the query string
      */
     public static String stripQueryString(String path) {
         int index = 0;
-        if ((index = path.indexOf('?')) != - 1) {
+        if ((index = path.indexOf('?')) != -1) {
             return path.substring(0, index);
         }
         return path;

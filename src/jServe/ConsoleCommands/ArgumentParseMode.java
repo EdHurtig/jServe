@@ -3,7 +3,7 @@ package jServe.ConsoleCommands;
 /**
  * Defines the different ways that the CommandArgs Argument Parser can parse an
  * argument string
- * 
+ *
  * @author Edward Hurtig <hurtige@ccs.neu.edu>
  * @version Oct 15, 2014
  */

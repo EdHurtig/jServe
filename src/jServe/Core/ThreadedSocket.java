@@ -1,4 +1,5 @@
 package jServe.Core;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,7 +11,6 @@ import java.net.SocketException;
 
 public class ThreadedSocket extends ServerSocket implements Runnable {
 
-    
 
     public ThreadedSocket(int port) throws IOException {
         super(port);
@@ -19,29 +19,29 @@ public class ThreadedSocket extends ServerSocket implements Runnable {
     @Override
     public void run() {
         WebServer.logInfo("Thread Registered for port " + getLocalPort());
-        while (WebServer.getStatus() == ServerStatus.Started || WebServer.getStatus() == ServerStatus.Starting ) {
+        while (WebServer.getStatus() == ServerStatus.Started || WebServer.getStatus() == ServerStatus.Starting) {
             Socket client = null;
-            
+
             try {
                 client = accept();
             } catch (IOException e) {
                 WebServer.logError("Accept Failed on Socket for socket on port " + getLocalPort() + ": " + e.getMessage());
                 continue;
             }
-            
+
             long start = System.nanoTime();
             Request req = new Request(client);
-             //Create thread for the socket
+            //Create thread for the socket
             Thread requestThread = new Thread(req);
 
-            WebServer.logInfo("Starting New Thread For Request " + req.getRequestID() );
+            WebServer.logInfo("Starting New Thread For Request " + req.getRequestID());
 
             //Start thread
-            requestThread.start();  
-           
+            requestThread.start();
+
         }
-        WebServer.logInfo("Thread Exit for port " + getLocalPort() + " Server Status = " + WebServer.getStatus() );
+        WebServer.logInfo("Thread Exit for port " + getLocalPort() + " Server Status = " + WebServer.getStatus());
 
     }
-    
+
 }
