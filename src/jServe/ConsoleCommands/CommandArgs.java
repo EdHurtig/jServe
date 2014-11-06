@@ -1,5 +1,7 @@
 package jServe.ConsoleCommands;
 
+import jServe.Core.CommandLine;
+
 import java.util.HashMap;
 
 /**
@@ -23,6 +25,11 @@ public class CommandArgs {
      * The Raw Args String
      */
     private String rawArgs;
+
+    /**
+     * The Command Line this Command is being executed on
+     */
+    private CommandLine commandline;
 
     /**
      * The mode that should be used for parsing the rawArgs String into a
@@ -170,4 +177,11 @@ public class CommandArgs {
         this.args = args;
     }
 
+    public CommandLine getCommandline() {
+        return commandline;
+    }
+
+    public void setCommandline(CommandLine commandline) {
+        this.commandline = commandline;
+    }
 }

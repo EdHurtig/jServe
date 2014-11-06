@@ -12,7 +12,23 @@ import java.io.PrintStream;
 /**
  * A CLICommand is the Base class for any jServe Command Line Command.
  */
-public abstract class CLICommand extends Runnable1Arg {
+public abstract class CLICommand extends Runnable1Arg<CommandArgs> {
+
+    /**
+     * Default Constructor. No Arguments Set for CLICommand
+     */
+    public CLICommand() {
+        super();
+    }
+
+    /**
+     * Initialize Command With the Args to pass
+     *
+     * @param args The CommandArgs for the command
+     */
+    public CLICommand(CommandArgs args) {
+        super(args);
+    }
 
     /**
      * Registers the given CLICommand cmd with the jServe CommandLine Handler
@@ -66,6 +82,12 @@ public abstract class CLICommand extends Runnable1Arg {
         else {
             COMMAND_LINE.registerCommand(names, cmd);
         }
+    }
+
+    public void execute(CommandArgs args) {
+        this.arg0 = args;
+        this.run();
+        this.arg0 = null;
     }
 
     /**
