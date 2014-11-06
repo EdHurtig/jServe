@@ -11,9 +11,7 @@ import java.util.HashMap;
 
 public class CommandLine implements Runnable {
 
-    static {
-        System.out.println("COMMAND LINE****************************");
-    }
+
 
     public void start() {
 
