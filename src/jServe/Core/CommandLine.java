@@ -1,7 +1,12 @@
 package jServe.Core;
 
+import com.sun.tools.internal.ws.wsdl.framework.DuplicateEntityException;
 import jServe.ConsoleCommands.CLICommand;
+import jServe.Core.Exceptions.JServeDuplicateKeyException;
+import org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 
 public class CommandLine implements Runnable {
@@ -90,12 +95,28 @@ public class CommandLine implements Runnable {
     }
 
     /**
-     * Runs raw java code
+     * Runs raw command line code
      * 
-     * @param cmd
+     * @param cmd The Shell cmd to execute
      */
     public void processShellCommand(String cmd) {
-        println("Shell Not Implemented Yet.");
+
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec(cmd);
+            p.waitFor();
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            String line;
+            while ((line = reader.readLine())!= null) {
+                println(line);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
