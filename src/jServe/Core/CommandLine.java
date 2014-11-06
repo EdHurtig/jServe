@@ -121,7 +121,7 @@ public class CommandLine implements Runnable {
      * Takes a string command and determines if the command is registered and if
      * so it runs it
      * 
-     * @param cmd
+     * @param cmd The command to process
      */
     public void proccessCommand(String cmd) {
         String name = cmd;
@@ -156,15 +156,47 @@ public class CommandLine implements Runnable {
      *            The CLICommand that will be called back with the arguments
      * @return True if the command was registered, otherwise False
      */
-    public boolean registerCommand(String name, CLICommand callback) {
+    public void registerCommand(String name, CLICommand callback) {
         name = name.toLowerCase();
         if (commands.containsKey(name)) {
-            return false;
+            throw new JServeDuplicateKeyException(name);
         }
         else {
             commands.put(name, callback);
-            return true;
         }
+    }
+
+    /**
+     * Registers the given command (callback) with the given names
+     *
+     * @param names
+     *            The Name of the command that will be matched
+     * @param callback
+     *            The CLICommand that will be called back with the arguments
+     * @return True if all names for the command were successfully registered, false if no names were provided
+     *         or on failure
+     */
+    public void registerCommand(String[] names, CLICommand callback) {
+        // Not successful if names is empty.
+        if (names.length > 0) {
+            for (int i = 0; i < names.length; i++) {
+                // attempt to register the command
+                try {
+                    this.registerCommand(names[i], callback);
+                } catch (JServeDuplicateKeyException e) {
+
+                    // Failed to register this command, unregister anything we did before it
+                    for (int j = 0; j < i; i++) {
+                        // Unregister the previous command
+                        this.unregisterCommand(names[j]);
+                    }
+
+                    throw e;
+                }
+            }
+
+        }
+
     }
 
     /**
