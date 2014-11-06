@@ -9,6 +9,9 @@ import jServe.Core.Runnable1Arg;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+/**
+ * A CLICommand is the Base class for any jServe Command Line Command.
+ */
 public abstract class CLICommand extends Runnable1Arg {
 
     /**
@@ -25,17 +28,43 @@ public abstract class CLICommand extends Runnable1Arg {
      * jServe > listsites Will call the CLICommand with the name "listsites" if
      * registered and the arg0 of ""
      * 
-     * @param name
-     * @param cmd
+     * @param name The name of the command
+     * @param cmd The CLICommand to register
      * @return Whether the registration of the command was successful
      */
-    public static boolean register(String name, CLICommand cmd) {
+    public static void register(String name, CLICommand cmd) {
         if (COMMAND_LINE == null) {
             errorStream.println("COMMAND_LINE is undefined, cannot register your Command");
-            return false;
         }
         else {
-            return COMMAND_LINE.registerCommand(name, cmd);
+            COMMAND_LINE.registerCommand(name, cmd);
+        }
+    }
+
+    /**
+     * Registers the given CLICommands cmd with the jServe CommandLine Handler
+     * with the given list of names a user can use to call your CLICommand by typing
+     * the any of the strings that you provide to this function Examples:
+     *
+     * jServe > list sites Will call the CLICommand with the name "list" if
+     * registered and the arg0 of "sites"
+     *
+     * jServe > list Will call the CLICommand with the name "list" if registered
+     * and the arg0 of ""
+     *
+     * jServe > listsites Will call the CLICommand with the name "listsites" if
+     * registered and the arg0 of ""
+     *
+     * @param names The name of the command
+     * @param cmd The CLICommand to register
+     * @return Whether the registration of the command was successful
+     */
+    public static void register(String[] names, CLICommand cmd) {
+        if (COMMAND_LINE == null) {
+            errorStream.println("COMMAND_LINE is undefined, cannot register your Command");
+        }
+        else {
+            COMMAND_LINE.registerCommand(names, cmd);
         }
     }
 
