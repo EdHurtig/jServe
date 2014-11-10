@@ -206,7 +206,7 @@ public class Utils {
         Console c = System.console();
         if (c != null) {
             if (hidden) {
-                line = new String(c.readPassword("[%s]", prompt.toString()));
+                line = new String(c.readPassword("%s", prompt.toString()));
             } else {
                 line = c.readLine(prompt.toString());
             }
