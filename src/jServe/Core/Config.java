@@ -1,5 +1,6 @@
 package jServe.Core;
 
+import jServe.Core.Exceptions.JServeException;
 import jServe.Sites.GenericSite;
 import jServe.Sites.Site;
 
@@ -9,63 +10,95 @@ import java.util.HashMap;
 
 import org.jsoup.*;
 import org.jsoup.nodes.*;
-import org.jsoup.parser.*;
 import org.jsoup.select.*;
 
 
+/**
+ * Contains the functionality for interfacing and parsing the Configuration file
+ */
 public class Config {
+
+    /**
+     * The configuration
+     */
     public static String CONFIG_FILE = "config/config.sample.html";
+
+    /**
+     * The current configuration HTML document
+     */
     private static Document currentConfig;
-    private static boolean loaded = false;
+
+    /**
+     * The path separator for the current OS
+     */
     public static String PATH_SEPARATOR = File.separator;
 
+    /**
+     * The status of all the sites
+     */
     private static HashMap<Integer, ServerStatus> savedSiteStati = new HashMap<Integer, ServerStatus>();
 
+    /**
+     * Saves the last state of the sites to the configuration file
+     */
     public static void saveSiteStates() {
         for (Site s : WebServer.sites) {
             savedSiteStati.put(s.getID(), s.getStatus());
         }
     }
 
+    /**
+     * Determines if a site should be started automatically
+     *
+     * @param site The site
+     * @return Whether the site should be started
+     */
     public static boolean shouldStartSite(Site site) {
         return ((site.getSettings().containsKey("autostart") && site.getSettings().get("autostart").equals("true")) ||
                 site.getStatus() == ServerStatus.Restarting);
     }
 
-    public static boolean unload() {
-        return unload(false);
+    /**
+     * Unloads the Server of all it's configuration.  Does not write to configuration file
+     */
+    public static void unload() {
+        unload(false);
     }
 
-    public static boolean unload(boolean fileWrite) {
-
-
+    /**
+     * Unloads the Server of all it's configuration
+     *
+     * @param fileWrite Whether to remove them from the configuration file
+     */
+    public static void unload(boolean fileWrite) {
         for (Site s : WebServer.sites) {
             if (!s.isStopped())
                 WebServer.stop(s);
-
             s.destroy();
         }
-
-
-        return true;
     }
 
-    public static boolean reload() {
-        boolean unloaded = unload();
-
-        if (unloaded)
-            return load();
-
-        WebServer.triggerInternalError("Failed to Reload Configuration because unloading failed");
-        return false;
+    /**
+     * Unloads the server and then reloads them from the configuration file
+     */
+    public static void reload() {
+        unload();
+        load();
     }
 
-
-    public static boolean load() {
-        return load(null);
+    /**
+     * Loads the server with the configuration file
+     */
+    public static void load() {
+        load(null);
     }
 
-    public static boolean load(String customHTML) {
+    /**
+     * Loads the server with the given configuration HTML
+     *
+     * @param customHTML The Custom Configuration
+     */
+    public static void load(String customHTML) {
 
         String html = null;
 
@@ -75,7 +108,7 @@ public class Config {
             html = customHTML;
 
         if (html == null)
-            return false;
+            throw new JServeException("Loading the configuration file failed");
 
         currentConfig = Jsoup.parse(html);
 
@@ -186,21 +219,16 @@ public class Config {
 
             site.setBindings(siteBindings);
         }
-
-        return true;
-
-
-//        double coolness = json.getDouble( "coolness" );
-//        int altitude = json.getInt( "altitude" );
-//        JSONObject pilot = json.getJSONObject("pilot");
-//        String firstName = pilot.getString("firstName");
-//        String lastName = pilot.getString("lastName");
-//        
-//        System.out.println( "Coolness: " + coolness );
-//        System.out.println( "Altitude: " + altitude );
-//        System.out.println( "Pilot: " + lastName );
     }
 
+    /**
+     * Does nothing at all
+     *
+     * @param selector Unused
+     * @param value    Unused
+     * @return True
+     * @deprecated I don't remember what this function was supposed to do
+     */
     public static boolean add(String selector, String value) {
 
         String newFile = currentConfig.toString();
@@ -209,10 +237,13 @@ public class Config {
         return true;
     }
 
-    public static boolean isLoaded() {
-        return loaded;
-    }
-
+    /**
+     * Adds bindings for the given site
+     *
+     * @param newBindings The Bindings desired
+     * @param site        The site the bindings are fore
+     * @return Whether the bindings were conflict free and registered, otherwise false
+     */
     public static boolean addBindings(ArrayList<Binding> newBindings, Site site) {
         ArrayList<Binding> allBindings = new ArrayList<Binding>();
         for (Site s : WebServer.sites) {
@@ -228,10 +259,20 @@ public class Config {
         return false;
     }
 
+    /**
+     * Gets the path of the application
+     *
+     * @return The path of the application
+     */
     public static File getAppPath() {
         return new File(WebServer.class.getProtectionDomain().getCodeSource().getLocation().getPath());
     }
 
+    /**
+     * Writes the configuration HTML to the config file
+     *
+     * @return Whether the write was successful
+     */
     public static boolean writeConfig() {
         return Utils.writeTextFile(CONFIG_FILE, currentConfig.html());
     }
