@@ -102,5 +102,10 @@ public class Binding {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return this.getProtocol() + "://" + this.getDomain() + ":" + this.getPort() + " [Local " + this.getLocalIP() + "] [Remote " + this.getRemoteIP() + "]";
+    }
+
 
 }
