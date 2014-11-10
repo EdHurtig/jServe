@@ -197,10 +197,8 @@ public class WebServer implements Configurable {
     /** SERVER AND SITE START AND STOP METHODS **/
     /**
      * Restarts the entire server. Stops all sites, reloads config, starts sites again
-     *
-     * @return boolean True on success, false on failure
      */
-    public static boolean restart() {
+    public static void restart() {
 
         for (Site s : sites) {
             if (s.isStarted()) {
@@ -208,24 +206,17 @@ public class WebServer implements Configurable {
             }
         }
 
-        boolean stopped = stop();
+        stop();
 
-        // Do More stuff
-        Config.reload();
-        if (stopped) {
-            return start();
-        }
+        ConfigurationManager.reload();
 
-        triggerInternalError("[restart-server] Server Failed to restart because stopping failed");
-        return false;
+        start();
     }
 
     /**
      * Starts the entire Server
-     *
-     * @return boolean True on success, false on failure
      */
-    public static boolean start() {
+    public static void start() {
         if (status != ServerStatus.Stopped) {
             triggerInternalError("[start-server] Server Status is currently: " + status
                     + ".  Must be stopped in order to start");

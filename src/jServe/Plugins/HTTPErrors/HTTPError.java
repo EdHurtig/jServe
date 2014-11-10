@@ -1,6 +1,6 @@
 package jServe.Plugins.HTTPErrors;
 
-import jServe.Core.ServerError;
+import jServe.Core.JServeError;
 
 /**
  * Abstract exception for HTTP Errors
@@ -8,7 +8,7 @@ import jServe.Core.ServerError;
  * @author Edward Hurtig <hurtige@ccs.neu.edu>
  * @version Oct 16, 2014
  */
-public abstract class HTTPError extends ServerError {
+public abstract class HTTPError extends JServeError {
 
     /**
      * Serial Long
