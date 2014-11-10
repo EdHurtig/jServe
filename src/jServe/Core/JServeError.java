@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Defines a generalized Error Object that provides information about Error Events while the server is running.
  */
-public class ServerError extends Exception {
+public class JServeError extends RuntimeException {
     /**
      * Serial Version ID
      */
@@ -74,8 +74,8 @@ public class ServerError extends Exception {
     public int countRecursive() {
         int count = 0;
         for (Exception e : exceptions) {
-            if (e instanceof ServerError) {
-                count += ((ServerError) e).count();
+            if (e instanceof JServeError) {
+                count += ((JServeError) e).count();
             }
             count += 1;
 
