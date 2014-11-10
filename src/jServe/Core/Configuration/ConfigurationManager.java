@@ -1,5 +1,6 @@
-package jServe.Core;
+package jServe.Core.Configuration;
 
+import jServe.Core.*;
 import jServe.Core.Exceptions.JServeException;
 import jServe.Sites.GenericSite;
 import jServe.Sites.Site;
@@ -16,12 +17,12 @@ import org.jsoup.select.*;
 /**
  * Contains the functionality for interfacing and parsing the Configuration file
  */
-public class Config {
+public class ConfigurationManager {
 
     /**
      * The configuration
      */
-    public static String CONFIG_FILE = "config/config.sample.html";
+    public static String CONFIG_FILE = "";
 
     /**
      * The current configuration HTML document
@@ -101,7 +102,9 @@ public class Config {
     public static void load(String customHTML) {
 
         String html = null;
-
+        if (CONFIG_FILE.equals("")) {
+            CONFIG_FILE = getAppPath() + Utils.cPath("/../../../config/config.sample.html");
+        }
         if (customHTML == null)
             html = Utils.readTextFile(CONFIG_FILE);
         else

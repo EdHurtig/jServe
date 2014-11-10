@@ -1,5 +1,8 @@
 package jServe.Core;
 
+import jServe.Core.Configuration.Configuration;
+import jServe.Core.Configuration.ConfigurationManager;
+import jServe.Core.Configuration.Configurable;
 import jServe.Sites.Site;
 
 import java.io.File;
@@ -129,8 +132,8 @@ public class WebServer implements Configurable {
             if (args.get(0).startsWith("--config=")) {
 
                 String config_file = args.get(0);
-                Config.CONFIG_FILE = config_file.substring(9);
-                logInfo("Config file overridden to " + Config.CONFIG_FILE);
+                ConfigurationManager.CONFIG_FILE = config_file.substring(9);
+                logInfo("Config file overridden to " + ConfigurationManager.CONFIG_FILE);
             }
 
             if (args.get(0).startsWith("--listdir=")) {
@@ -226,23 +229,36 @@ public class WebServer implements Configurable {
         if (status != ServerStatus.Stopped) {
             triggerInternalError("[start-server] Server Status is currently: " + status
                     + ".  Must be stopped in order to start");
-            return false;
+            return;
         }
-        boolean errors = false;
-        setStatus(ServerStatus.Starting);
-        errors = errors || !Config.load();
+
+        JServeError errors = new JServeError();
+        WebServer.setStatus(ServerStatus.Starting);
+
+        try {
+            ConfigurationManager.load();
+        } catch (Exception e) {
+            WebServer.setStatus(ServerStatus.Error);
+            errors.add(e);
+            throw errors;
+        }
 
         for (Site s : sites) {
-            if (Config.shouldStartSite(s)) {
-                errors = errors || !start(s);
+            try {
+                if (ConfigurationManager.shouldStartSite(s)) {
+                    WebServer.start(s);
+                }
+            } catch (Exception ex) {
+                errors.add(ex);
             }
         }
-        if (errors) {
+
+        if (errors.any()) {
             setStatus(ServerStatus.Error);
-            return false;
+            throw errors;
         }
+
         setStatus(ServerStatus.Started);
-        return true;
     }
 
     /**
@@ -257,9 +273,9 @@ public class WebServer implements Configurable {
             return false;
         }
         setStatus(ServerStatus.Stopping);
-        ServerError errors = new ServerError();
+        JServeError errors = new JServeError();
 
-        Config.saveSiteStates();
+        ConfigurationManager.saveSiteStates();
 
         for (Site s : sites) {
             if (!stop(s)) {
@@ -541,7 +557,7 @@ public class WebServer implements Configurable {
     }
 
     @Override
-    public boolean configure() {
+    public boolean configure(Configuration c) {
         // TODO Auto-generated method stub
         return false;
     }

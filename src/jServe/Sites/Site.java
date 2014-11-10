@@ -1,8 +1,9 @@
 package jServe.Sites;
 
 import jServe.Core.Binding;
-import jServe.Core.Config;
-import jServe.Core.Configurable;
+import jServe.Core.Configuration.Configuration;
+import jServe.Core.Configuration.ConfigurationManager;
+import jServe.Core.Configuration.Configurable;
 import jServe.Core.Plugins;
 import jServe.Core.Request;
 import jServe.Core.ServerStatus;
@@ -45,7 +46,7 @@ public abstract class Site implements Runnable, Configurable {
     }
 
     public boolean setName(String name) {
-        if (Config.add("sites." + getID() + ".name", this.getName())) {
+        if (ConfigurationManager.add("sites." + getID() + ".name", this.getName())) {
             this.name = name;
             return true;
         }
@@ -57,7 +58,7 @@ public abstract class Site implements Runnable, Configurable {
     }
 
     public boolean setBindings(ArrayList<Binding> bindings) {
-        if (Config.addBindings(bindings, this)) {
+        if (ConfigurationManager.addBindings(bindings, this)) {
             this.bindings = bindings;
             return true;
         }
@@ -193,7 +194,7 @@ public abstract class Site implements Runnable, Configurable {
     }
 
     @Override
-    public boolean configure() {
+    public boolean configure(Configuration c) {
         return true;
     }
 
