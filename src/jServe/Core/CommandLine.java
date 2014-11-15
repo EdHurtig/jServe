@@ -4,6 +4,8 @@ import com.sun.tools.internal.ws.wsdl.framework.DuplicateEntityException;
 import jServe.ConsoleCommands.CLICommand;
 import jServe.ConsoleCommands.CommandArgs;
 import jServe.Core.Exceptions.JServeDuplicateKeyException;
+import jServe.Strings.Formatter;
+import jServe.Strings.TableFormatter;
 import org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName;
 
 import java.io.BufferedReader;
@@ -12,9 +14,15 @@ import java.util.HashMap;
 
 public class CommandLine implements Runnable {
 
+    private Formatter<String[][]> tableFormmatter;
 
     public void start() {
 
+        // Initialize this CommandLine with fomatters
+
+        this.tableFormmatter = new TableFormatter();
+
+        // Import all commands in the ConsoleCommands package
         PackageLoader.load("jServe.ConsoleCommands");
 
         println(" _       __     __                             __             _ _____                    ");
@@ -283,5 +291,9 @@ public class CommandLine implements Runnable {
      */
     public void unsupportedArg() {
         WebServer.triggerPluggableError("[CLI] Command was passed an unsupported parameter");
+    }
+
+    public Formatter<String[][]> getTableFormmatter() {
+        return tableFormmatter;
     }
 }
