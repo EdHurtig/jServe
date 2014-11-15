@@ -18,10 +18,28 @@ public class ThreadedSocket extends ServerSocket implements Runnable {
 
     @Override
     public void run() {
+        int n = 0;
+        while (!isBound() && n < 10) {
+            WebServer.logInfo("Waiting for Socket on port " + this.getLocalPort() + " to bind");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
+            n++;
+        }
+        if (!isBound()) {
+
+            throw new JServeException(new SocketException("Socket failed to bind after 10 seconds"));
+
+        }
         WebServer.logInfo("Thread Registered for port " + getLocalPort());
         while (WebServer.getStatus() == ServerStatus.Started || WebServer.getStatus() == ServerStatus.Starting) {
             Socket client = null;
 
+            // If the socket was closed (no more sites using it), then stop the thread
+            if (isClosed()) {
+                return;
+            }
             try {
                 client = accept();
             } catch (IOException e) {
