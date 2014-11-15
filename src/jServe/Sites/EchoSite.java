@@ -11,7 +11,7 @@ public class EchoSite extends Site {
 
     @Override
     public void run(Request r) {
-        r.out.println(r.headers);
+        r.out.println(r.getRawRequest());
     }
 
 }
