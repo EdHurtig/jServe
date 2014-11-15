@@ -117,6 +117,21 @@ public class JServeError extends RuntimeException {
     }
 
     /**
+     * Returns a list of all the exception messages that this JServeError encountered
+     *
+     * @return an ArrayList of all the Exception Messages
+     */
+    public ArrayList<String> getMessages() {
+        ArrayList<String> messages = new ArrayList<String>(exceptions.size());
+
+        for (Exception e : getExceptions()) {
+            messages.add(e.getMessage());
+        }
+
+        return messages;
+    }
+
+    /**
      * Attempts to handle the error
      *
      * @return True if the error was handled to the specifications of the error thrower, otherwise false
