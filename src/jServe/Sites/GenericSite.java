@@ -4,6 +4,7 @@ import jServe.Core.MIME;
 import jServe.Core.Request;
 import jServe.Core.Utils;
 import jServe.Core.WebServer;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 
@@ -28,7 +29,7 @@ public class GenericSite extends Site {
         for (String defaultDocument : getDefaultDocuments()) {
 
             if (getSettings().get("DOCUMENT_ROOT") != null) {
-                String uri = Utils.stripQueryString(r.variables.get("REQUEST_URI"));
+                String uri = Utils.stripQueryString(r.getVariables().get("REQUEST_URI"));
                 String path = getSettings().get("DOCUMENT_ROOT") + Utils.cPath(uri + defaultDocument);
                 WebServer.logDebug("Testing for Document " + path);
 
@@ -44,7 +45,7 @@ public class GenericSite extends Site {
                 if (mime.getTypes() != null) {
                     try {
                         r.getClient().getOutputStream()
-                                .write(("Content-Type: " + Utils.join('/', mime.getTypes())).getBytes());
+                                .write(("Content-Type: " + StringUtils.join(mime.getTypes(), '/')).getBytes());
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
