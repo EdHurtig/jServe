@@ -3,7 +3,9 @@ package jServe.Core;
 import jServe.Core.Configuration.Configuration;
 import jServe.Core.Configuration.ConfigurationManager;
 import jServe.Core.Configuration.Configurable;
+import jServe.Core.Exceptions.JServeException;
 import jServe.Sites.Site;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,24 +103,6 @@ public class WebServer implements Configurable {
     private static boolean crashOnInternalError = true;
 
     /**
-     * GETTERS/SETTERS *
-     */
-    public static ServerStatus getStatus() {
-        return status;
-    }
-
-    public static void setStatus(ServerStatus newStatus) {
-        logInfo("Setting Server Status to " + newStatus.toString());
-        status = newStatus;
-
-        if (status == ServerStatus.Error) {
-            stop();
-            triggerInternalError("Server Status was set to Error: Exiting");
-        }
-
-    }
-
-    /**
      * MAIN *
      */
     public static void main(String[] rawargs) {
@@ -151,16 +135,27 @@ public class WebServer implements Configurable {
 
         logInfo("--- SERVER IS UP AND RUNNING ---");
 
-        logInfo("--- COMMAND LINE OPEN AND READY ---");
-
         COMMAND_LINE.start();
 
     }
 
+    /**
+     * Registers a Thread without a Runnable
+     *
+     * @param t The Thread
+     * @return Whether the thread was registered successfully
+     */
     public static boolean registerThread(Thread t) {
         return registerThread(t, null);
     }
 
+    /**
+     * Registers the given thread with a runnable
+     *
+     * @param t      The Thread
+     * @param target The Runnable
+     * @return Whether the thread was registered successfully
+     */
     public static boolean registerThread(Thread t, Runnable target) {
         if (!threadRegistry.containsKey(t) || t.getState() == Thread.State.TERMINATED) {
             threadRegistry.put(t, target);
@@ -176,6 +171,9 @@ public class WebServer implements Configurable {
         return false;
     }
 
+    /**
+     * Initializes the Server
+     */
     public static void init() {
         ArrayList<String> jsmime = new ArrayList<String>();
         jsmime.add("text");
@@ -195,8 +193,12 @@ public class WebServer implements Configurable {
     }
 
     /** SERVER AND SITE START AND STOP METHODS **/
+
     /**
      * Restarts the entire server. Stops all sites, reloads config, starts sites again
+     *
+     * @throws jServe.Core.Exceptions.JServeException
+     * @throws jServe.Core.JServeError
      */
     public static void restart() {
 
@@ -215,12 +217,15 @@ public class WebServer implements Configurable {
 
     /**
      * Starts the entire Server
+     *
+     * @throws jServe.Core.Exceptions.JServeException
+     * @throws jServe.Core.JServeError
      */
     public static void start() {
         if (status != ServerStatus.Stopped) {
             triggerInternalError("[start-server] Server Status is currently: " + status
                     + ".  Must be stopped in order to start");
-            return;
+            throw new JServeException("Server already running");
         }
 
         JServeError errors = new JServeError();
@@ -239,29 +244,30 @@ public class WebServer implements Configurable {
                 if (ConfigurationManager.shouldStartSite(s)) {
                     WebServer.start(s);
                 }
-            } catch (Exception ex) {
-                errors.add(ex);
+            } catch (Exception e) {
+                errors.add(e);
             }
         }
 
-        if (errors.any()) {
+        if (errors.ok()) {
+            setStatus(ServerStatus.Started);
+        } else {
             setStatus(ServerStatus.Error);
             throw errors;
         }
-
-        setStatus(ServerStatus.Started);
     }
 
     /**
      * Stops the entire server and all sites
      *
-     * @return Whether the stop was successful
+     * @throws jServe.Core.Exceptions.JServeException
+     * @throws jServe.Core.JServeError
      */
-    public static boolean stop() {
+    public static void stop() {
         if (status != ServerStatus.Started) {
             triggerInternalError("[start-server] Server Status is currently: " + status
                     + ".  Must be started in order to stop");
-            return false;
+            throw new JServeException("Server not running");
         }
         setStatus(ServerStatus.Stopping);
         JServeError errors = new JServeError();
@@ -269,42 +275,58 @@ public class WebServer implements Configurable {
         ConfigurationManager.saveSiteStates();
 
         for (Site s : sites) {
-            if (!stop(s)) {
-                errors.add(new RuntimeException("Failed to Stop Site: " + s.getName()));
+            try {
+                stop(s);
+            } catch (Exception e) {
+                errors.add(e);
             }
         }
 
         // Check if there was an error
-        if (errors.any()) {
-            status = ServerStatus.Error;
-            return false;
+        if (errors.ok()) {
+            setStatus(ServerStatus.Stopped);
+        } else {
+            setStatus(ServerStatus.Error);
+            throw errors;
         }
-
-        setStatus(ServerStatus.Stopped);
-        return true;
     }
 
+    /**
+     * Restarts the specified Site
+     *
+     * @param site the Site to restart
+     * @throws jServe.Core.Exceptions.JServeException
+     * @throws jServe.Core.JServeError
+     */
     public static void restart(Site site) {
-        if (stop(site)) {
-            if (start(site)) {
-                triggerInternalError("[Restart]: Failed to ReStart Site " + site.getName());
-            } else {
-                triggerInternalError("[Restart]: Failed to Stop Site " + site.getName());
-            }
+        try {
+            stop(site);
+            start(site);
+        } catch (JServeException e) {
+            triggerInternalError("[Restart]: Failed to Restart Site " + site.getName());
+
+            throw e;
         }
     }
 
-    public static boolean start(Site site) {
+    /**
+     * Starts the specified site
+     *
+     * @param site The site to start
+     * @throws jServe.Core.Exceptions.JServeException
+     * @throws jServe.Core.JServeError
+     */
+    public static void start(Site site) {
 
         if (site.getStatus() != ServerStatus.Stopped) {
             triggerInternalError("[Start] Didn't start site " + site.getName() + " because it is currently "
                     + site.getStatus());
-            return false;
+            throw new JServeException("Site is not stopped");
         }
 
         site.setStatus(ServerStatus.Starting);
 
-        boolean errors = false;
+        JServeError errors = new JServeError();
         for (Binding siteBinding : site.getBindings()) {
             try {
                 ThreadedSocket siteSocket = null;
@@ -328,7 +350,7 @@ public class WebServer implements Configurable {
                     } catch (Exception e) {
                         triggerInternalError("Could Not Bind siteSocket for " + site.getName() + " to port "
                                 + siteBinding.getPort());
-                        errors = true;
+                        errors.add(e);
                         continue;
                     }
                     sockets.add(siteSocket);
@@ -346,60 +368,75 @@ public class WebServer implements Configurable {
 
             } catch (Exception e) {
                 triggerInternalError("Failed to Start " + site.getName());
-                errors = true;
+                errors.add(e);
             }
         }
-        if (!errors) {
+        if (errors.ok()) {
             logDebug("Registered All Threads for Site " + site.getName());
             site.setStatus(ServerStatus.Started);
-            return true;
+        } else {
+            site.setStatus(ServerStatus.Error);
+
+            try {
+                stop(site);
+            } catch (Exception e) {
+                errors.add(e);
+                throw errors;
+            }
         }
-        site.setStatus(ServerStatus.Error);
-
-        stop(site);
-
-        return false;
-
     }
 
-    public static boolean stop(Site s) {
+    /**
+     * Stops the specified Site
+     *
+     * @param s The site to stop
+     * @throws jServe.Core.Exceptions.JServeException
+     * @throws jServe.Core.JServeError
+     */
+    public static void stop(Site s) {
         if (s.getStatus() != ServerStatus.Started) {
-            return false;
+            // Don't Try to Stop a site that is not running
+            throw new JServeException("Site is not running");
         }
-        int attemptClosings = 0;
+
+        // Set status to Stopping
         s.setStatus(ServerStatus.Stopping);
-        ArrayList<String> errors = new ArrayList<String>();
+
+        JServeError errors = new JServeError();
+
         for (Binding b : s.getBindings()) {
-            if (getSitesForPort(b.getPort()).size() == 1) {
-                attemptClosings++;
+
+            if (getSitesForPort(b.getPort()).size() == 0) {
+
                 ThreadedSocket ts = getSocketForPort(b.getPort());
+
                 try {
                     ts.close();
                 } catch (IOException e) {
-                    errors.add("[Stop]: Failed to close Socket on port " + ts.getLocalPort());
+                    errors.add(e);
                 }
             }
         }
 
-        if (errors.size() == 0) {
+        if (errors.ok()) {
+
+            // Set the Site status to Stopped
             s.setStatus(ServerStatus.Stopped);
+
             logInfo("Stopped Site " + s.getName());
-            return true;
-        }
 
-        for (String e : errors) {
-            triggerInternalError(e);
-        }
-
-        // If no sockets were closed mark the site as running still, else set
-        // state to error
-        if (errors.size() == attemptClosings) {
-            s.setStatus(ServerStatus.Started);
         } else {
+
+            // Print out the error messages
+            for (String m : errors.getMessages()) {
+                logError(m);
+            }
+
+            // Set the Status of the site to Error
             s.setStatus(ServerStatus.Error);
+            throw errors;
         }
 
-        return false;
 
     }
 
@@ -407,6 +444,12 @@ public class WebServer implements Configurable {
      * SITE BINDINGS *
      */
 
+    /**
+     * Gets the ThreadedSocket that is listening on the specified port
+     *
+     * @param port The Port Number
+     * @return The ThreadedSocket that is listening on the given port
+     */
     public static ThreadedSocket getSocketForPort(int port) {
         for (ThreadedSocket s : sockets) {
             if (s.getLocalPort() == port) {
@@ -416,18 +459,32 @@ public class WebServer implements Configurable {
         return null;
     }
 
+    /**
+     * Returns a list of all the sites that are started and that are listening on the given port
+     *
+     * @param port The Port Number
+     * @return A List of sites that are actively registered on a given port
+     */
     public static ArrayList<Site> getSitesForPort(int port) {
         ArrayList<Site> returns = new ArrayList<Site>();
         for (Site s : sites) {
-            for (Binding b : s.getBindings()) {
-                if (b.getPort() == port) {
-                    returns.add(s);
+            if (s.getStatus().equals(ServerStatus.Started)) {
+                for (Binding b : s.getBindings()) {
+                    if (b.getPort() == port) {
+                        returns.add(s);
+                    }
                 }
             }
         }
         return returns;
     }
 
+    /**
+     * Gets the site registered that has the given ID
+     *
+     * @param id The ID of the site you want
+     * @return The Site object with the given ID
+     */
     public static Site getSiteByID(int id) {
         ArrayList<Site> returns = new ArrayList<Site>();
         for (Site s : sites) {
@@ -438,6 +495,13 @@ public class WebServer implements Configurable {
         return null;
     }
 
+    /**
+     * Gets the Thread object that was used to launch a ThreadedSocket object
+     * which is listening on the given port number
+     *
+     * @param port The port number
+     * @return The Thread object that is running the ThreadedSocket for the given port
+     */
     public static Thread getThreadForPort(int port) {
         Thread t = null;
 
@@ -445,8 +509,8 @@ public class WebServer implements Configurable {
         while (it.hasNext()) {
             Map.Entry<Thread, Runnable> pair = (Map.Entry<Thread, Runnable>) it.next();
 
-            for (ThreadedSocket socket : sockets) {
-                if (pair.getValue() == socket) {
+            for (ThreadedSocket socket : WebServer.sockets) {
+                if (pair.getValue().equals(socket)) {
                     t = pair.getKey();
                     break;
                 }
@@ -456,16 +520,25 @@ public class WebServer implements Configurable {
         return t;
     }
 
+    /**
+     * Given the Protocol, Host, and port number, determine the site that is bound with that information
+     *
+     * @param protocol The protocol (HTTP, HTTPS)
+     * @param host     The Host header.  An IP Address, fqdn, or hostname i.e. localhost, 192.168.1.100, or example.com
+     * @param port     The Port number the request came in on
+     * @return The Site that matches the criteria
+     */
     public static Site matchSite(String protocol, String host, int port) {
+        // This shouldn't happen
         protocol = protocol.substring(0, protocol.indexOf("/"));
 
+        // If the host argument has a port in it
         int indx = host.indexOf(':');
         if (indx > 0) {
             port = Integer.valueOf(host.substring(indx + 1));
             host = host.substring(0, indx);
         }
 
-        // String to be scanned to find the pattern.
 
         for (Site s : sites) {
             if (s.getStatus() == ServerStatus.Started) {
@@ -485,31 +558,59 @@ public class WebServer implements Configurable {
      * ERROR HANDLING AND LOGGING METHODS *
      */
 
+    /**
+     * ------ In Case of Emergency ------
+     * --- Break Server and Log Error ---
+     * ----------------------------------
+     * Logs an error message to the console and halts the server if WebServer.crashOnInternalError
+     * is set to true
+     *
+     * @param message The message to print to the console
+     */
     public static void triggerInternalError(String message) {
         SimpleDateFormat timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         if (errorStream != null) {
+            // Print message
             errorStream.println("[" + timestamp.format(new Date()) + "] " + message);
-
         }
+
+        // Only crash if this setting is true
         if (crashOnInternalError) {
-            timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-            errorStream.println("[" + timestamp.format(new Date()) + "] [Core] FATAL ERROR! Bringing down the server!");
-            status = ServerStatus.Error;
+
+            if (errorStream != null) {
+                // Generate new Timestamp
+                timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                // Print the shutdown message
+                errorStream.println("[" + timestamp.format(new Date()) + "] [Core] FATAL ERROR! Bringing down the server!");
+            }
+
+            // Erring out
+            WebServer.status = ServerStatus.Error;
+
+            // Kill all the threads so that we don't have zombies
             try {
                 for (Thread t : threadRegistry.keySet()) {
                     t.interrupt();
                 }
-                timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-                errorStream.println("[" + timestamp.format(new Date()) + "] [Core] ");
+                if (errorStream != null) {
+                    timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                    errorStream.println("[" + timestamp.format(new Date()) + "] [Core] ");
+                }
             } catch (Exception e) {
 
             }
-
+            // Print the stack trace that led to this predicament
             new Throwable().printStackTrace();
+            // Shutdown
             System.exit(1);
         }
     }
 
+    /**
+     * For Less serious errors.  Prints an error message to the console
+     *
+     * @param message THe message to print
+     */
     public static void triggerPluggableError(String message) {
         if (errorStream != null) {
             SimpleDateFormat timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -517,6 +618,11 @@ public class WebServer implements Configurable {
         }
     }
 
+    /**
+     * Logs debugging information to the console
+     *
+     * @param message the message to print
+     */
     public static void logDebug(String message) {
         if (DEBUG && outputStream != null) {
             SimpleDateFormat timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -524,6 +630,11 @@ public class WebServer implements Configurable {
         }
     }
 
+    /**
+     * Logs some informational information to the console
+     *
+     * @param message the message to print
+     */
     public static void logInfo(String message) {
         if (outputStream != null) {
             SimpleDateFormat timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -547,16 +658,50 @@ public class WebServer implements Configurable {
         return ids;
     }
 
+    /**
+     * Configures this class
+     *
+     * @param c the full Configuration
+     * @return whether configuration was successful
+     */
     @Override
     public boolean configure(Configuration c) {
         // TODO Auto-generated method stub
         return false;
     }
 
+    /**
+     * Logs a generic Error to the console
+     *
+     * @param message The Error message to print
+     */
     public static void logError(String message) {
         if (outputStream != null) {
             SimpleDateFormat timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             outputStream.println('[' + timestamp.format(new Date()) + "] " + message);
         }
+    }
+
+    /**
+     * GETTERS/SETTERS *
+     */
+    public static ServerStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * Sets the status of the server
+     *
+     * @param newStatus THe new status
+     */
+    public static void setStatus(ServerStatus newStatus) {
+        logInfo("Setting Server Status to " + newStatus.toString());
+        status = newStatus;
+
+        if (status == ServerStatus.Error) {
+            stop();
+            triggerInternalError("Server Status was set to Error: Exiting");
+        }
+
     }
 }
