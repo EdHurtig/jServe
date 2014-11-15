@@ -137,7 +137,7 @@ public class WebServer implements Configurable {
             }
 
             if (args.get(0).startsWith("--listdir=")) {
-                logDebug(Utils.join("\n", new File(args.get(0).substring(10)).listFiles()));
+                logDebug(StringUtils.join(new File(args.get(0).substring(10)).listFiles(), '\n'));
             }
         }
 
