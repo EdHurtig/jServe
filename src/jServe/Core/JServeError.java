@@ -1,5 +1,6 @@
 package jServe.Core;
 
+import jServe.Core.Exceptions.JServeException;
 import jServe.Sites.Site;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Defines a generalized Error Object that provides information about Error Events while the server is running.
  */
-public class JServeError extends RuntimeException {
+public class JServeError extends JServeException {
     /**
      * Serial Version ID
      */
