@@ -4,6 +4,7 @@ import jServe.Core.CommandLine;
 import jServe.Core.Utils;
 import jServe.Core.WebServer;
 import jServe.Sites.Site;
+import org.apache.commons.lang.StringUtils;
 
 public class ListSitesCommand extends CLICommand {
     static {
@@ -20,12 +21,21 @@ public class ListSitesCommand extends CLICommand {
     public void run(CommandArgs arg0) {
 
         CommandLine c = WebServer.COMMAND_LINE;
-        c.println(Utils.padLeft("", 30, "-"));
+        String[][] data = new String[WebServer.sites.size() + 1][4];
+        data[0] = new String[]{"#", "ID", "Name", "Status"};
+
+        int row_num = 1;
         for (Site s : WebServer.sites) {
-            c.println(Utils.padRight("" + s.getID(), 5) + " | " + Utils.padTruncateRight(s.getName(), 15) + " | "
-                    + s.getStatus().toString());
+            data[row_num] = new String[]{row_num + "", s.getID() + "", s.getName(), s.getStatus().toString()};
+
+            row_num++;
+
         }
-        c.println("Total of " + WebServer.sites.size() + " Sites Registered");
+
+        c.println(c.getTableFormmatter().format(data));
+
+
+        c.println("\nTotal of " + WebServer.sites.size() + " Sites Registered");
 
     }
 }
