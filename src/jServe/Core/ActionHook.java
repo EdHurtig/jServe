@@ -1,54 +1,138 @@
 package jServe.Core;
 
+/**
+ * Provides one of the Core elements for integrating plugins into jServe.
+ * Much like WordPress, this class along with the Plugins class allows
+ * methods to be called when invoked via the Plugins.do_action('event_tag', args)
+ */
 public class ActionHook implements Comparable<ActionHook> {
 
+    /**
+     * Constructor with a callback
+     *
+     * @param callback The callback function
+     */
     public ActionHook(Runnable callback) {
         setCallback(callback);
+        setPriority(10);
+        setNum_args(0);
     }
 
-    public ActionHook(Runnable callback, int priority) {
+    /**
+     * Constructor with a callback and a priority
+     *
+     * @param callback The callback function
+     * @param priority The priority of this hook when the event is fired (low-first)
+     */
+    public ActionHook(Runnable callback, double priority) {
         setCallback(callback);
         setPriority(priority);
+        setNum_args(0);
     }
 
-    public ActionHook(Runnable callback, int priority, int num_args) {
+    /**
+     * * Constructor with a callback and a priority
+     *
+     * @param callback The callback function
+     * @param priority The priority of this hook when the event is fired (low-first)
+     * @param num_args The number of args that this hook accepts
+     */
+    public ActionHook(Runnable callback, double priority, int num_args) {
         setCallback(callback);
         setPriority(priority);
         setNum_args(num_args);
     }
 
+    /**
+     * THe callback function
+     */
     private Runnable callback;
 
-    private int priority = 10;
+    /**
+     * The priority of this hook.  A low number will fire earlier than a higher number
+     */
+    private double priority;
 
+    /**
+     * The number of argument that this action hook accepts
+     *
+     * @deprecated
+     */
     private int num_args = 0;
 
+    /**
+     * Gets the Callback function
+     *
+     * @return the callback function
+     */
     public Runnable getCallback() {
         return callback;
     }
 
+    /**
+     * Updates the callback function
+     *
+     * @param callback the new callback function
+     */
     public void setCallback(Runnable callback) {
         this.callback = callback;
     }
 
-    public int getPriority() {
+    /**
+     * Gets the priority of this hook
+     *
+     * @return The priority
+     */
+    public double getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    /**
+     * Sets the priority of this hook
+     *
+     * @param priority the new priority
+     */
+    public void setPriority(double priority) {
         this.priority = priority;
     }
 
+    /**
+     * Gets the number of args that this action hook accepts
+     *
+     * @return The number of args accepted
+     */
     public int getNum_args() {
         return num_args;
     }
 
+    /**
+     * Sets the number of args this hook accepts
+     *
+     * @param num_args The new number of args
+     * @deprecated
+     */
     public void setNum_args(int num_args) {
         this.num_args = num_args;
     }
 
+
+    /**
+     * Compares this hook to another by priority
+     *
+     * @param other The Other acton hook
+     * @return Whether this ActonHook has a Lower priority number (fires earlier) than the other
+     */
     @Override
     public int compareTo(ActionHook other) {
-        return (this.getPriority() - other.getPriority());
+        if (other == null) {
+            return 1;
+        }
+        if (this.getPriority() > other.getPriority()) {
+            return -1;
+        } else if (this.getPriority() == other.getPriority()) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 }
