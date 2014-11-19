@@ -43,4 +43,13 @@ public abstract class Runnable1Arg<T> implements Runnable {
     public void run() {
         run(this.arg0);
     }
+
+    /**
+     * Returns the maximum number of arguments accepted by this Runnable
+     *
+     * @return The max number of args this can use
+     */
+    public int getMaxArgs() {
+        return 1;
+    }
 }

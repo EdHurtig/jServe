@@ -53,4 +53,13 @@ public abstract class Runnable4Args<T, U, V, W> extends Runnable3Args<T, U, V> i
     public void run() {
         this.run(this.arg0, this.arg1, this.arg2, this.arg3);
     }
+
+    /**
+     * Returns the maximum number of arguments accepted by this Runnable
+     *
+     * @return The max number of args this can use
+     */
+    public int getMaxArgs() {
+        return 4;
+    }
 }

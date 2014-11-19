@@ -51,4 +51,12 @@ public abstract class Runnable3Args<T, U, V> extends Runnable2Args<T, U> impleme
         this.run(arg0, arg1, arg2);
     }
 
+    /**
+     * Returns the maximum number of arguments accepted by this Runnable
+     *
+     * @return The max number of args this can use
+     */
+    public int getMaxArgs() {
+        return 3;
+    }
 }

@@ -48,4 +48,13 @@ public abstract class Runnable2Args<T, U> extends Runnable1Arg<T> implements Run
         run(this.arg0, this.arg1);
     }
 
+    /**
+     * Returns the maximum number of arguments accepted by this Runnable
+     *
+     * @return The max number of args this can use
+     */
+    public int getMaxArgs() {
+        return 2;
+    }
+
 }
