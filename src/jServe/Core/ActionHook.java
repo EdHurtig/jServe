@@ -15,7 +15,6 @@ public class ActionHook implements Comparable<ActionHook> {
     public ActionHook(Runnable callback) {
         setCallback(callback);
         setPriority(10);
-        setNum_args(0);
     }
 
     /**
@@ -27,7 +26,6 @@ public class ActionHook implements Comparable<ActionHook> {
     public ActionHook(Runnable callback, double priority) {
         setCallback(callback);
         setPriority(priority);
-        setNum_args(0);
     }
 
     /**
@@ -40,7 +38,6 @@ public class ActionHook implements Comparable<ActionHook> {
     public ActionHook(Runnable callback, double priority, int num_args) {
         setCallback(callback);
         setPriority(priority);
-        setNum_args(num_args);
     }
 
     /**
@@ -52,13 +49,6 @@ public class ActionHook implements Comparable<ActionHook> {
      * The priority of this hook.  A low number will fire earlier than a higher number
      */
     private double priority;
-
-    /**
-     * The number of argument that this action hook accepts
-     *
-     * @deprecated
-     */
-    private int num_args = 0;
 
     /**
      * Gets the Callback function
@@ -101,18 +91,14 @@ public class ActionHook implements Comparable<ActionHook> {
      *
      * @return The number of args accepted
      */
-    public int getNum_args() {
-        return num_args;
-    }
+    public int getNumArgs() {
 
-    /**
-     * Sets the number of args this hook accepts
-     *
-     * @param num_args The new number of args
-     * @deprecated
-     */
-    public void setNum_args(int num_args) {
-        this.num_args = num_args;
+        if (callback instanceof Runnable1Arg) {
+            return ((Runnable1Arg) callback).getMaxArgs();
+        }
+
+        return 0;
+
     }
 
 

@@ -39,7 +39,7 @@ public class Plugins {
             Arrays.sort(actionHooks.toArray());
 
             for (ActionHook ah : actionHooks) {
-                Object[] ah_args = Arrays.copyOf(args, ah.getNum_args());
+                Object[] ah_args = Arrays.copyOf(args, ah.getNumArgs());
 
                 invoke_callback(ah.getCallback(), ah_args);
             }
