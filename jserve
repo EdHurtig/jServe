@@ -1,0 +1,4 @@
+# Sample Executable.  Replace /Users/ehurtig/Documents/Java/jServe/out/production/jServe with the path to the compiled classes
+# and /Users/ehurtig/Documents/Java/jServe/lib with the path to the included libraries
+
+java -classpath "/Users/ehurtig/Documents/Java/jServe/out/production/jServe:/Users/ehurtig/Documents/Java/jServe/lib/jsoup-1.7.2.jar:/Users/ehurtig/Documents/Java/jServe/lib/ezmorph-1.0.6.jar:/Users/ehurtig/Documents/Java/jServe/lib/commons-io-2.4.jar:/Users/ehurtig/Documents/Java/jServe/lib/commons-lang-2.6.jar:/Users/ehurtig/Documents/Java/jServe/lib/json-lib-2.4-jdk15.jar:/Users/ehurtig/Documents/Java/jServe/lib/commons-logging-1.1.2.jar:/Users/ehurtig/Documents/Java/jServe/lib/commons-beanutils-1.8.3.jar:/Users/ehurtig/Documents/Java/jServe/lib/commons-collections-3.2.1.jar:" jServe.Core.WebServer
