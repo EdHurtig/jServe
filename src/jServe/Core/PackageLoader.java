@@ -1,19 +1,19 @@
 package jServe.Core;
 
-import jServe.ConsoleCommands.CLICommand;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * Loads a package by name
+ */
 public class PackageLoader {
 
     /**
      * Loads the classes from the given package
      *
-     * @param packageName
+     * @param packageName The name of the package
      */
     public static ArrayList<String> load(String packageName) {
 
