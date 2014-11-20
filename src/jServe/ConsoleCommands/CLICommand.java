@@ -47,7 +47,6 @@ public abstract class CLICommand extends Runnable1Arg<CommandArgs> {
      *
      * @param name The name of the command
      * @param cmd  The CLICommand to register
-     * @return Whether the registration of the command was successful
      */
     public static void register(String name, CLICommand cmd) {
         if (COMMAND_LINE == null) {
@@ -73,7 +72,6 @@ public abstract class CLICommand extends Runnable1Arg<CommandArgs> {
      *
      * @param names The name of the command
      * @param cmd   The CLICommand to register
-     * @return Whether the registration of the command was successful
      */
     public static void register(String[] names, CLICommand cmd) {
         if (COMMAND_LINE == null) {
@@ -83,10 +81,17 @@ public abstract class CLICommand extends Runnable1Arg<CommandArgs> {
         }
     }
 
+    /**
+     * Executes the CLICommand with the given args
+     *
+     * @param args The args
+     */
     public void execute(CommandArgs args) {
+        // Set the args
         this.arg0 = args;
+
+        // Call the run function... just as the Thread class does
         this.run();
-        this.arg0 = null;
     }
 
     /**
