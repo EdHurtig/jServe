@@ -28,17 +28,6 @@ public class ActionHook implements Comparable<ActionHook> {
         setPriority(priority);
     }
 
-    /**
-     * * Constructor with a callback and a priority
-     *
-     * @param callback The callback function
-     * @param priority The priority of this hook when the event is fired (low-first)
-     * @param num_args The number of args that this hook accepts
-     */
-    public ActionHook(Runnable callback, double priority, int num_args) {
-        setCallback(callback);
-        setPriority(priority);
-    }
 
     /**
      * THe callback function

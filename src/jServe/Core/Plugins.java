@@ -5,15 +5,26 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 
-/* Codded Wordpress Style because I love the wordpress Plugin API */
+/**
+ * Codded WordPress Style because I love the WordPress Plugin API
+ */
 public class Plugins {
 
+    /**
+     * The internal list of actions
+     */
     private static HashMap<String, ArrayList<ActionHook>> actions = new HashMap<String, ArrayList<ActionHook>>();
 
+    /**
+     * Executes an action with no args
+     *
+     * @param hook The action to fire
+     */
     public static void do_action(String hook) {
         do_action(hook, new Object[]{});
     }
 
+    //TODO: Use params instead of this
     public static void do_action(String hook, Object arg0) {
         do_action(hook, new Object[]{arg0});
     }
@@ -31,7 +42,14 @@ public class Plugins {
                                  Object arg2, Object arg3) {
         do_action(hook, new Object[]{arg0, arg1, arg2, arg3});
     }
+    //TODO: End previous TODO
 
+    /**
+     * Fires callbacks subscribed for the specified action
+     *
+     * @param hook The tag
+     * @param args The arguments to pass
+     */
     public static void do_action(String hook, Object[] args) {
         if (actions.containsKey(hook) && actions.get(hook).size() > 0) {
             ArrayList<ActionHook> actionHooks = actions.get(hook);
@@ -46,22 +64,30 @@ public class Plugins {
         }
     }
 
+    /**
+     * Subscribes a callback to a action tag
+     *
+     * @param hook     The Tag of tha ction / event that you want to subscribe to
+     * @param callback The callback function
+     */
     public static void add_action(String hook, Runnable callback) {
-        add_action(hook, callback, 10, 0);
+        add_action(hook, callback, 10);
     }
 
+    /**
+     * Subscribes a callback to a action tag
+     *
+     * @param hook     The Tag of tha ction / event that you want to subscribe to
+     * @param callback The callback function
+     * @param priority The priority (lower = earlier)
+     */
     public static void add_action(String hook, Runnable callback, int priority) {
-        add_action(hook, callback, priority, 0);
-    }
-
-    public static void add_action(String hook, Runnable callback,
-                                  int priority, int num_args) {
         if (actions.containsKey(hook)) {
             actions.get(hook)
-                    .add(new ActionHook(callback, priority, num_args));
+                    .add(new ActionHook(callback, priority));
         } else {
             ArrayList<ActionHook> actionhooks = new ArrayList<ActionHook>();
-            actionhooks.add(new ActionHook(callback, priority, num_args));
+            actionhooks.add(new ActionHook(callback, priority));
             actions.put(hook, actionhooks);
         }
     }
